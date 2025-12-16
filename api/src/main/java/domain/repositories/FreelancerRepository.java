@@ -8,4 +8,5 @@ public  interface FreelancerRepository {
     public List<Freelancer> getAll();
     public Freelancer findById(int id);
     public Freelancer createFreelancer(Freelancer freelancer);
+    public void createProposeAnswear(int idPropose);
 }
