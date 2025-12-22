@@ -1,4 +1,4 @@
-package presentation.dtos;
+package com.ufc.quixada.api.presentation.dtos;
 
 public record FreelancerRequestDTO (
     String id,

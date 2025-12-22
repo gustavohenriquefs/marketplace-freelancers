@@ -1,4 +1,4 @@
-package domain.entities;
+package com.ufc.quixada.api.domain.entities;
 
 public class Address {
     private String street;

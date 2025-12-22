@@ -1,8 +1,7 @@
-package presentation.dtos;
+package com.ufc.quixada.api.presentation.dtos;
 
 public record FreelancerResponseDTO(
         String id,
         String nome,
-        String email,
-        String specialty
+        String email
 ) { }

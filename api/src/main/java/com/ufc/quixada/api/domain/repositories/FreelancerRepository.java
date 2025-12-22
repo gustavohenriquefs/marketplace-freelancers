@@ -1,11 +1,11 @@
-package domain.repositories;
+package com.ufc.quixada.api.domain.repositories;
 
-import domain.entities.Freelancer;
+import com.ufc.quixada.api.domain.entities.Freelancer;
 
 import java.util.List;
 
 public  interface FreelancerRepository {
-    public List<Freelancer> getAll();
+    public List<Freelancer> findAll();
     public Freelancer findById(int id);
     public Freelancer createFreelancer(Freelancer freelancer);
     public void createProposeAnswear(int idPropose);
