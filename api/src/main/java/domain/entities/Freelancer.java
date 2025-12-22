@@ -5,6 +5,8 @@ public class Freelancer {
     private String nome;
     private String cpf;
     private Address address;
+    private String email;
+    private String specialty;
 
     public Freelancer() {}
 
@@ -42,5 +44,21 @@ public class Freelancer {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getSpecialty() {
+        return this.specialty;
+    }
+
+    public void setSpecialty(String specialty) {
+        this.specialty = specialty;
     }
 }
