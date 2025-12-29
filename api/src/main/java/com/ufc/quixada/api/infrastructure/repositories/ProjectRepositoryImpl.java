@@ -4,14 +4,12 @@ import com.ufc.quixada.api.application.mappers.ProjectMapper;
 import com.ufc.quixada.api.domain.entities.Project;
 import com.ufc.quixada.api.domain.repositories.ProjectRepository;
 import com.ufc.quixada.api.infrastructure.models.ProjectJpaEntity;
-import org.springframework.stereotype.Service;
 
-@Service()
 public class ProjectRepositoryImpl implements ProjectRepository {
-    private final JpaProjectInterface jpaRepo;
+    private final JpaProjectRepository jpaRepo;
     private final ProjectMapper projectMapper;
 
-    public ProjectRepositoryImpl(JpaProjectInterface jpaRepo, ProjectMapper projectMapper) {
+    public ProjectRepositoryImpl(JpaProjectRepository jpaRepo, ProjectMapper projectMapper) {
         this.jpaRepo = jpaRepo;
         this.projectMapper = projectMapper;
     }
