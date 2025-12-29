@@ -1,20 +1,21 @@
-package com.ufc.quixada.api.data.repositories;
+package com.ufc.quixada.api.infrastructure.repositories;
 
+import com.ufc.quixada.api.application.mappers.FreelancerMapper;
 import com.ufc.quixada.api.domain.entities.Freelancer;
 import com.ufc.quixada.api.domain.repositories.FreelancerRepository;
-import com.ufc.quixada.api.data.mappers.FreelancerPersistenceMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Repository
+@Service()
 public class FreelancerRepositoryImpl implements FreelancerRepository {
 
     private final JpaFreelancerInterface jpaRepo;
-    private final FreelancerPersistenceMapper mapper;
+    private final FreelancerMapper mapper;
 
-    public FreelancerRepositoryImpl(JpaFreelancerInterface jpaRepo, FreelancerPersistenceMapper mapper) {
+    public FreelancerRepositoryImpl(JpaFreelancerInterface jpaRepo, FreelancerMapper mapper) {
         this.jpaRepo = jpaRepo;
         this.mapper = mapper;
     }
@@ -34,10 +35,5 @@ public class FreelancerRepositoryImpl implements FreelancerRepository {
     @Override
     public Freelancer createFreelancer(Freelancer freelancer) {
         return null;
-    }
-
-    @Override
-    public void createProposeAnswear(int idPropose) {
-
     }
 }

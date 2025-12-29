@@ -1,0 +1,57 @@
+package com.ufc.quixada.api.infrastructure.models;
+
+import com.ufc.quixada.api.domain.enums.ExperienceLevel;
+import com.ufc.quixada.api.domain.enums.ProjectStatus;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+
+@Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class ProjectJpaEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+    private String description;
+    private BigDecimal budget;
+    private ProjectStatus status;
+    private ExperienceLevel experienceLevel;
+    private Integer deadlineInDays;
+    private Boolean isPublic;
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    private ContractorJpaEntity contractor;
+
+    @ManyToOne (cascade = CascadeType.ALL)
+    private CategoryJpaEntity category;
+
+    @ManyToOne (cascade = CascadeType.ALL)
+    private SubcategoryJpaEntity subcategory;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<ProposeJpaEntity> proposes;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    private List<FileJpaEntity> files;
+
+    @ManyToMany
+    @JoinTable(
+            name = "project_skills",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "skill_id")
+    )
+    private List<SkillJpaEntity> skills;
+}
