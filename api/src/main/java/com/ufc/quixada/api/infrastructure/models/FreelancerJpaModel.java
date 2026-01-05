@@ -2,14 +2,18 @@ package com.ufc.quixada.api.infrastructure.models;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Set;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "freelancers")
 public class FreelancerJpaModel {
 
-    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,6 +29,7 @@ public class FreelancerJpaModel {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<ProposeJpaEntity> proposes;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private UserJpaModel user;
 }

@@ -9,13 +9,18 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 //@Mapper(uses = {MetaRendimentoMapper.class, ItemRendimentoMapper.class})
-@Mapper(componentModel = "spring", uses = {})
+@Mapper(componentModel = "spring", uses = { UserMapper.class })
 public interface FreelancerMapper {
 
     FreelancerMapper INSTANCE = Mappers.getMapper(FreelancerMapper.class);
 
+    @Mapping(target = "projects", ignore = true)
+    @Mapping(target = "proposes", ignore = true)
     Freelancer toDomain(FreelancerJpaModel jpaEntity);
     Freelancer toDomain(FreelancerRequestDTO dto);
+    @Mapping(target = "projects", ignore = true)
+    @Mapping(target = "proposes", ignore = true)
+    @Mapping(target = "user", ignore = true)
     FreelancerJpaModel toJpaEntity(Freelancer domain);
 
     @Mapping(target = "id", source = "user.id")

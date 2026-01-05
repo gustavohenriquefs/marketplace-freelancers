@@ -16,11 +16,13 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Qualifier("authenticationEntryPoint")
+    @Qualifier("delegatedAuthenticationEntryPoint")
     @Autowired private ExceptionHandlerAuthenticationEntryPoint exceptionHandlerAuthenticationEntryPoint;
 
     @Autowired private SecurityFilter securityFilter;
@@ -50,7 +52,12 @@ public class SecurityConfig {
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(exceptionHandlerAuthenticationEntryPoint)
+                        // Sem token (não autenticado): devolve 403 (como você pediu)
+                        .authenticationEntryPoint((request, response, authException) ->
+                                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Você precisa se autenticar para acessar esse recurso."))
+                        // Token válido mas sem permissão/role: também 403
+                        .accessDeniedHandler((request, response, accessDeniedException) ->
+                                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Você não tem permissão para acessar esse recurso."))
                 )
                 .cors(
                         httpSecurityCorsConfigurer ->
