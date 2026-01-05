@@ -1,10 +1,16 @@
 package com.ufc.quixada.api.infrastructure.models;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "contractors")
 public class ContractorJpaModel {
     @Id
@@ -14,6 +20,7 @@ public class ContractorJpaModel {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProjectJpaModel> projects;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private UserJpaModel user;
 }

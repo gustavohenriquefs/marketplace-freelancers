@@ -28,6 +28,19 @@ public class SecurityFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        // Se já existe autenticação (ex: outro filtro/handler setou), não mexa.
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // Não tenta validar token nas rotas públicas de auth.
+        String path = request.getRequestURI();
+        if (path != null && path.startsWith("/auth")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         var token = this.recoverToken(request);
 
         if(token != null){

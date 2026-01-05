@@ -34,18 +34,11 @@ public class CreateUserUseCase {
         // Criptografia (Regra de segurança aplicada antes de salvar)
         String encodedPass = passwordEncoder.encode(userDomain.getPassword());
         userDomain.setPassword(encodedPass);
-        var User = userRepository.save(userDomain);
-
         var freelancerProfile = new Freelancer();
-        freelancerProfile.setUser(User);
-        freelancerProfile = freelancerRepository.createFreelancer(freelancerProfile);
-
         var contractorProfile = new Contractor();
-        contractorProfile.setUser(User);
-        contractorProfile = contractorRepository.createContractor(contractorProfile);
-
+        freelancerProfile.setUser(userDomain);
+        contractorProfile.setUser(userDomain);
         userDomain.setFreelancerProfile(freelancerProfile);
-
         userDomain.setContractorProfile(contractorProfile);
 
         userRepository.save(userDomain);

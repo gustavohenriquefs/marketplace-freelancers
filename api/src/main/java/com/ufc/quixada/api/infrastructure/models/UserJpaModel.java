@@ -32,11 +32,9 @@ public class UserJpaModel implements UserDetails {
     private String password;
     private String name;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
-    @JoinColumn(name = "freelancer_profile_id")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private FreelancerJpaModel freelancerProfile;
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
-    @JoinColumn(name = "contractor_profile_id")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private ContractorJpaModel contractorProfile;
 
     @Override
@@ -51,7 +49,7 @@ public class UserJpaModel implements UserDetails {
 
     @Override
     public @Nullable String getPassword() {
-        return "";
+        return this.password;
     }
 
     @Override
