@@ -1,0 +1,21 @@
+{
+  "idCategoria":"2",
+  "idSubCategoria":"17",
+  "nome":"Otimização e modelagem de banco de dados legado 2",
+  "descricao":"Estamos em busca de um profissional com experiência em análise e estruturação de banco de dados para um projeto de curto prazo.\n\nO objetivo é analisar uma estrutura de banco de dados já existente (sistema legado), identificar inconsistências e propor um modelo mais otimizado para uma futura migração. Não será necessário desenvolver a aplicação completa agora; apenas a análise da base atual e a documentação técnica sugerindo a nova arquitetura.\n\nO que esperamos:\n\n• Análise da estrutura de tabelas atual.\n• Documentação das rotinas de banco de dados e dos relacionamentos.\n• Sugestão de normalização de dados.\n\nPrecisamos de alguém com boa comunicação e capacidade de documentar processos técnicos. Favor enviar propostas com valor por hora ou valor fechado para a análise inicial.",
+  "arquivos":[],
+  "idHabilidades":[689,1323,586,54],
+  "idNivelExperiencia":3,
+  "deadlineEmDias":"30",
+  "publico":false,
+  "valorMinimoCents":null,
+  //Sem necessidade isso aqui embbaixo
+  "processing":false,
+  "postagem":true,
+  "lax":false,
+  "logado":true,
+  "redeSocial":false,
+  "novoUsuario":false,
+  "gaClientId":"555",
+  "confirmarAcao":false
+}
