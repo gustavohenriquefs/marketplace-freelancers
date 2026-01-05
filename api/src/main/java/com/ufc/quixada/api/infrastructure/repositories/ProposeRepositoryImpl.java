@@ -1,6 +1,8 @@
 package com.ufc.quixada.api.infrastructure.repositories;
 
 import com.ufc.quixada.api.application.mappers.ProposeMapper;
+import com.ufc.quixada.api.domain.entities.Freelancer;
+import com.ufc.quixada.api.domain.entities.Project;
 import com.ufc.quixada.api.domain.entities.Propose;
 import com.ufc.quixada.api.domain.repositories.ProposeRepository;
 import com.ufc.quixada.api.infrastructure.models.ProposeJpaEntity;
@@ -17,8 +19,18 @@ public class ProposeRepositoryImpl implements ProposeRepository {
     }
 
     @Override
-    public Propose createPropose(Propose propose) {
-        return null;
+    public Propose create(Propose propose) {
+        ProposeJpaEntity entity = proposeMapper.toJpaEntity(propose);
+        ProposeJpaEntity savedEntity = jpaProposeRepository.save(entity);
+        return proposeMapper.toDomain(savedEntity);
+    }
+
+    @Override
+    public boolean existsByFreelancerIdAndProjectId(Long freelancer_id, Long project_id) {
+        return jpaProposeRepository.existsByFreelancerIdAndProjectId(
+                freelancer_id,
+                project_id
+        );
     }
 
     @Override

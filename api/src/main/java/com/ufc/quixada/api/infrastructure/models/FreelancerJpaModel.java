@@ -1,5 +1,6 @@
 package com.ufc.quixada.api.infrastructure.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ public class FreelancerJpaModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "freelancer_projects",
@@ -26,10 +28,11 @@ public class FreelancerJpaModel {
     )
     private Set<ProjectJpaModel> projects;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<ProposeJpaEntity> proposes;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private UserJpaModel user;
 }

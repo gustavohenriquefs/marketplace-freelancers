@@ -2,14 +2,18 @@ package com.ufc.quixada.api.infrastructure.models;
 
 import com.ufc.quixada.api.domain.enums.ProposeStatus;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "propose")
+@Getter
+@Setter
 public class ProposeJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,17 +25,24 @@ public class ProposeJpaEntity {
     @Column()
     private int duration;
 
-    @Setter
     @Column()
     private ProposeStatus status;
 
     @Column()
     private BigDecimal price;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @CreationTimestamp
+    private LocalDate createdAt;
+
+    @UpdateTimestamp
+    private LocalDate updatedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "project_id", nullable = false)
     private ProjectJpaModel project;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne
+    @JoinColumn(name = "freelancer_id", nullable = false, unique = false)
     private FreelancerJpaModel freelancer;
 
 }

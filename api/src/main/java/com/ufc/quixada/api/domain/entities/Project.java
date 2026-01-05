@@ -22,7 +22,7 @@ public class Project {
     private BigDecimal budget;
     private ProjectStatus status;
     private ExperienceLevel experienceLevel;
-    private Integer deadlineInDays;
+    private Long deadlineInDays;
     private Boolean isPublic;
     private LocalDate createdAt;
     private LocalDate updatedAt;

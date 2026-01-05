@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(componentModel = "spring", uses = { UserMapper.class })
+@Mapper(componentModel = "spring")
 public interface ContractorMapper {
     ContractorMapper INSTANCE = Mappers.getMapper(ContractorMapper.class);
 
@@ -18,5 +18,7 @@ public interface ContractorMapper {
     ContractorJpaModel toJpaEntity(Contractor contractor);
 
     @Mapping(target = "projects", ignore = true)
+    @Mapping(target = "user.freelancerProfile", ignore = true)
+    @Mapping(target = "user.contractorProfile", ignore = true)
     Contractor toDomain(ContractorJpaModel contractorJpaEntity);
 }

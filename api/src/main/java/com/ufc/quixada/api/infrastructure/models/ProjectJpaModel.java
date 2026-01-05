@@ -1,5 +1,6 @@
 package com.ufc.quixada.api.infrastructure.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ufc.quixada.api.domain.enums.ExperienceLevel;
 import com.ufc.quixada.api.domain.enums.ProjectStatus;
 import jakarta.persistence.*;
@@ -7,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -30,23 +33,32 @@ public class ProjectJpaModel {
     private BigDecimal budget;
     private ProjectStatus status;
     private ExperienceLevel experienceLevel;
-    private Integer deadlineInDays;
+    private Long deadlineInDays;
     private Boolean isPublic;
+
+    @CreationTimestamp
     private LocalDate createdAt;
+
+    @UpdateTimestamp
     private LocalDate updatedAt;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
+    @JoinColumn(name = "contractor_id")
     private ContractorJpaModel contractor;
 
-    @ManyToOne (cascade = CascadeType.ALL)
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
     private CategoryJpaModel category;
 
-    @ManyToOne (cascade = CascadeType.ALL)
+    @ManyToOne
+    @JoinColumn(name = "subcategory_id", nullable = false)
     private SubcategoryJpaModel subcategory;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
     private List<ProposeJpaEntity> proposes;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
     private List<FileJpaModel> files;
 

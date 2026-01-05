@@ -1,4 +1,10 @@
 package com.ufc.quixada.api.presentation.dtos;
 
-public record CreateProposeRequestDTO() {
+import java.math.BigDecimal;
+
+public record CreateProposeRequestDTO(
+    BigDecimal price,
+    int duration,
+    String description
+) {
 }

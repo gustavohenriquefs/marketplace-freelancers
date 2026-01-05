@@ -11,6 +11,6 @@ public class IssuePropose {
     }
 
     public Propose execute(Propose propose) {
-        return proposeRepository.createPropose(propose);
+        return proposeRepository.create(propose);
     }
 }

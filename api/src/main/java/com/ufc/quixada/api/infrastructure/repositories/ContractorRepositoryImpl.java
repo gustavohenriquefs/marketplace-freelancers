@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContractorRepositoryImpl implements ContractorRepository {
@@ -21,5 +23,11 @@ public class ContractorRepositoryImpl implements ContractorRepository {
                 contractorMapper.toJpaEntity(contractor)
             )
         );
+    }
+
+    @Override
+    public Optional<Contractor> findById(Long id) {
+        return jpaContractorRepository.findById(id)
+            .map(contractorMapper::toDomain);
     }
 }

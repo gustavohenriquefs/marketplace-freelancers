@@ -8,6 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 public class ProjectRepositoryImpl implements ProjectRepository {
     private static final Logger log = LoggerFactory.getLogger(ProjectRepositoryImpl.class);
 
@@ -36,6 +40,20 @@ public class ProjectRepositoryImpl implements ProjectRepository {
         log.info("Projeto convertido de volta para domínio: {}", domainResult);
 
         return domainResult;
+    }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<Project> findAll() {
+        return jpaRepo.findAll().stream()
+                .map(projectMapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Project> findById(Long id) {
+        return jpaRepo.findById(id)
+                .map(projectMapper::toDomain);
     }
 }

@@ -29,7 +29,7 @@ public record ProjectRequestDTO(
     ExperienceLevel experienceLevel,
 
     @NotBlank(message = "Deadline is required")
-    String deadlineDays,
+    String deadlineInDays,
 
     @NotNull(message = "Visibility status must be specified")
     Boolean isPublic,
@@ -38,7 +38,7 @@ public record ProjectRequestDTO(
     Long categoryId,
 
     @NotNull(message = "Sub-category ID is required")
-    Long subCategoryId,
+    Long subcategoryId,
 
     // Opcional - Pode ser null ou vazio
     // Para upload de arquivos com multipart/form-data

@@ -5,7 +5,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class ValueOfEnumValidator implements ConstraintValidator<ValueOfEnum, CharSequence> {
+public class ValueOfEnumValidator implements ConstraintValidator<ValueOfEnum, Object> {
     private List<String> acceptedValues;
     private boolean nullable = false;
     private boolean empty = false;
@@ -18,17 +18,34 @@ public class ValueOfEnumValidator implements ConstraintValidator<ValueOfEnum, Ch
     }
 
     @Override
-    public boolean isValid(CharSequence value, ConstraintValidatorContext context) {
+    public boolean isValid(Object value, ConstraintValidatorContext context) {
         String allowedValuesString = String.join(", ", acceptedValues);
+
+        // Se o valor é null
         if (value == null) {
             return validCheck(nullable, context, allowedValuesString);
         }
 
-        if (value.isEmpty()) {
-            return validCheck(empty, context, allowedValuesString);
+        // Converte o valor para String
+        String stringValue;
+        if (value instanceof Enum<?>) {
+            // Se é um Enum, pega o name()
+            stringValue = ((Enum<?>) value).name();
+        } else if (value instanceof CharSequence) {
+            // Se é String ou CharSequence
+            stringValue = value.toString();
+
+            // Verifica se está vazio
+            if (stringValue.isEmpty()) {
+                return validCheck(empty, context, allowedValuesString);
+            }
+        } else {
+            // Qualquer outro tipo, tenta converter para String
+            stringValue = value.toString();
         }
 
-        boolean isValid = acceptedValues.contains(value.toString());
+        // Valida se o valor está na lista de valores aceitos
+        boolean isValid = acceptedValues.contains(stringValue);
 
         if (!isValid) {
             context.disableDefaultConstraintViolation();

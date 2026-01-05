@@ -31,8 +31,10 @@ public record CreateProjectJsonDTO(
     @ValueOfEnum(enumClass = ExperienceLevel.class, nullable = false)
     ExperienceLevel experienceLevel,
 
-    @NotBlank(message = "Deadline is required")
-    String deadlineDays,
+    @Min(message = "Deadline is required", value = 1)
+    Long deadlineInDays,
+
+    List<String> files,
 
     @NotNull(message = "Visibility status must be specified")
     Boolean isPublic,
@@ -41,7 +43,7 @@ public record CreateProjectJsonDTO(
     Long categoryId,
 
     @NotNull(message = "Sub-category ID is required")
-    Long subCategoryId,
+    Long subcategoryId,
 
     @NotEmpty(message = "At least one skill is required")
     List<@NotNull Long> skillsIds

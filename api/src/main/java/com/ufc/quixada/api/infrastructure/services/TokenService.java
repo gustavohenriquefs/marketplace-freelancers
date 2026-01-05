@@ -27,6 +27,9 @@ public class TokenService {
                     .withIssuer("quixada-api") // Nome da sua aplicação
                     .withSubject(user.getEmail()) // O "dono" do token
                     .withExpiresAt(genExpirationDate()) // Expira em 2h
+                    .withClaim("id", user.getId()) // Adiciona o ID do usuário como claim
+                    .withClaim("contractorId", user.getContractorProfile().getId()) // Adiciona o contratorId como claim
+                    .withClaim("freelancerId", user.getFreelancerProfile().getId()) // Adiciona o freelancerId como claim, se existir
                     .sign(algorithm);
         } catch (JWTCreationException exception) {
             throw new RuntimeException("Erro ao gerar token JWT", exception);
