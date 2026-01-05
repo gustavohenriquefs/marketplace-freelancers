@@ -5,6 +5,7 @@ import com.ufc.quixada.api.application.mappers.UserMapper;
 import com.ufc.quixada.api.domain.entities.User;
 import com.ufc.quixada.api.domain.repositories.UserRepository;
 import com.ufc.quixada.api.infrastructure.models.UserJpaModel;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -18,6 +19,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    @Transactional
     public User save(User user) {
         UserJpaModel model = mapper.toJpaEntity(user);
         UserJpaModel saved = springRepo.save(model);
@@ -25,11 +27,13 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<User> findById(String email) {
         return Optional.empty();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<User> findByEmail(String email) {
         return springRepo.findByEmail(email).map(mapper::toDomain);
     }

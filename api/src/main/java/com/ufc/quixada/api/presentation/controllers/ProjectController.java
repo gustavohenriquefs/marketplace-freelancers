@@ -7,14 +7,19 @@ import com.ufc.quixada.api.application.usecases.AnswerPropose;
 import com.ufc.quixada.api.application.usecases.CreateProject;
 import com.ufc.quixada.api.application.usecases.IssuePropose;
 import com.ufc.quixada.api.domain.entities.Project;
+import com.ufc.quixada.api.domain.enums.ProposeStatus;
 import com.ufc.quixada.api.presentation.dtos.*;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/projects")
 public class ProjectController {
+    private static final Logger log = LoggerFactory.getLogger(ProjectController.class);
+
     private final CreateProject createProjectUseCase;
     private final ProjectMapper projectMapper;
 
@@ -22,13 +27,13 @@ public class ProjectController {
     private final ProposeMapper proposeMapper;
     private final AnswerPropose answerPropose;
 
-    public ProjectController(CreateProject _createProject, IssuePropose issuePropose, ProposeMapper proposeMapper, AnswerPropose answerPropose) {
+    public ProjectController(CreateProject _createProject, ProjectMapper projectMapper, IssuePropose issuePropose, ProposeMapper proposeMapper, AnswerPropose answerPropose) {
         this.createProjectUseCase = _createProject;
         this.issuePropose = issuePropose;
         this.answerPropose = answerPropose;
 
         this.proposeMapper = proposeMapper;
-        this.projectMapper = ProjectMapper.INSTANCE;
+        this.projectMapper = projectMapper;
     }
 
     @PatchMapping("/proposes/{proposeId}/answer")
@@ -36,22 +41,33 @@ public class ProjectController {
             @PathVariable Long proposeId,
             @Valid @RequestBody AnswerProposeRequestDTO request
     ) {
+        log.info("=== Respondendo proposta ===");
+        log.info("ProposeId: {}, NewStatus: {}", proposeId, request.newStatus());
+
+        // Converte String → Enum
+        ProposeStatus status = ProposeStatus.valueOf(request.newStatus());
+
         UpdateProposeStatusCommand command =
-                new UpdateProposeStatusCommand(proposeId, request.newStatus());
+                new UpdateProposeStatusCommand(proposeId, status);
 
         this.answerPropose.execute(command);
+
+        log.info("Proposta respondida com sucesso");
 
         return ResponseEntity.noContent().build();
 
     }
 
-    @PostMapping()
-    public ResponseEntity<ProjectResponseDTO> createProject(@Valid @ModelAttribute ProjectRequestDTO projectReq) {
+    @PostMapping(consumes = "application/json")
+    public ResponseEntity<ProjectResponseDTO> createProject(@Valid @RequestBody ProjectRequestDTO projectReq) {
         Project project = this.projectMapper.toDomain(projectReq);
+
         Project result = this.createProjectUseCase.execute(project);
 
         if (result != null) {
-            return ResponseEntity.ok(projectMapper.toDto(result));
+            ProjectResponseDTO dto = projectMapper.toDto(result);
+            System.out.println("🎯 Retornando DTO");
+            return ResponseEntity.ok(dto);
         }
 
         return ResponseEntity.notFound().build();

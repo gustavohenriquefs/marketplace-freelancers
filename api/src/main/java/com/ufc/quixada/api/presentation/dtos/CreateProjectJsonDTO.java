@@ -4,12 +4,15 @@ import com.ufc.quixada.api.domain.enums.ExperienceLevel;
 import com.ufc.quixada.api.domain.enums.ProjectStatus;
 import com.ufc.quixada.api.presentation.validators.ValueOfEnum;
 import jakarta.validation.constraints.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-public record ProjectRequestDTO(
+/**
+ * DTO para criar projeto via JSON (sem upload de arquivos).
+ * Para upload de arquivos, use ProjectRequestDTO com multipart/form-data.
+ */
+public record CreateProjectJsonDTO(
     @NotBlank(message = "Project name cannot be empty")
     @Size(min = 3, max = 100, message = "Name must be between 3 and 100 characters")
     String name,
@@ -22,10 +25,10 @@ public record ProjectRequestDTO(
     @DecimalMin(value = "0.0", inclusive = false, message = "Budget must be greater than 0")
     BigDecimal budget,
 
-    @ValueOfEnum(enumClass =  ProjectStatus.class, nullable = false)
+    @ValueOfEnum(enumClass = ProjectStatus.class, nullable = false)
     ProjectStatus status,
 
-    @ValueOfEnum(enumClass =  ExperienceLevel.class, nullable = false)
+    @ValueOfEnum(enumClass = ExperienceLevel.class, nullable = false)
     ExperienceLevel experienceLevel,
 
     @NotBlank(message = "Deadline is required")
@@ -40,11 +43,7 @@ public record ProjectRequestDTO(
     @NotNull(message = "Sub-category ID is required")
     Long subCategoryId,
 
-    // Opcional - Pode ser null ou vazio
-    // Para upload de arquivos com multipart/form-data
-    List<MultipartFile> files,
-
-    // Pelo menos uma skill é necessária
     @NotEmpty(message = "At least one skill is required")
     List<@NotNull Long> skillsIds
 ) {}
+

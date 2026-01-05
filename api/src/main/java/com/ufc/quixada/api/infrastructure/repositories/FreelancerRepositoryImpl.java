@@ -6,7 +6,7 @@ import com.ufc.quixada.api.domain.repositories.FreelancerRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 public class FreelancerRepositoryImpl implements FreelancerRepository {
 
@@ -18,6 +18,8 @@ public class FreelancerRepositoryImpl implements FreelancerRepository {
         this.mapper = mapper;
     }
 
+    @Override
+    @Transactional(readOnly = true)
     public List<Freelancer> findAll() {
         return jpaRepo.findAll().stream()
                 .map(mapper::toDomain)
@@ -28,6 +30,8 @@ public class FreelancerRepositoryImpl implements FreelancerRepository {
         return null;
     }
 
+    @Override
+    @Transactional
     public Freelancer createFreelancer(Freelancer freelancer) {
         return mapper.toDomain(
                 jpaRepo.save(
