@@ -14,4 +14,12 @@ public class Propose {
     private LocalDate createdAt;
 
     private Freelancer freelancer;
+
+    public Boolean isFinalized() {
+        return this.status == ProposeStatus.ACCEPTED || this.status == ProposeStatus.REJECTED || this.status ==  ProposeStatus.CANCELED;
+    }
+
+    public void updateStatus(ProposeStatus proposeStatus) {
+        this.status = proposeStatus;
+    }
 }

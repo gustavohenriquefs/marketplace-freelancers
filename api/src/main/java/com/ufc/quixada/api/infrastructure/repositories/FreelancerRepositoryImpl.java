@@ -6,6 +6,7 @@ import com.ufc.quixada.api.domain.repositories.FreelancerRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Repository;
 
 public class FreelancerRepositoryImpl implements FreelancerRepository {
 
@@ -28,6 +29,10 @@ public class FreelancerRepositoryImpl implements FreelancerRepository {
     }
 
     public Freelancer createFreelancer(Freelancer freelancer) {
-        return null;
+        return mapper.toDomain(
+                jpaRepo.save(
+                        mapper.toJpaEntity(freelancer)
+                )
+        );
     }
 }

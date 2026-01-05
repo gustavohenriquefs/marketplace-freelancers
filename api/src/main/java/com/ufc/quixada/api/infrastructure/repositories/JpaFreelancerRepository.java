@@ -1,8 +1,6 @@
 package com.ufc.quixada.api.infrastructure.repositories;
 
-import com.ufc.quixada.api.infrastructure.models.FreelancerJpaEntity;
+import com.ufc.quixada.api.infrastructure.models.FreelancerJpaModel;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface JpaFreelancerRepository extends JpaRepository<FreelancerJpaEntity, Long>{}
+public interface JpaFreelancerRepository extends JpaRepository<FreelancerJpaModel, Long>{}

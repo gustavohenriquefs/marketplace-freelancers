@@ -17,7 +17,10 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProjectJpaEntity {
+@Table(
+        name = "projects"
+)
+public class ProjectJpaModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,19 +36,19 @@ public class ProjectJpaEntity {
     private LocalDate updatedAt;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    private ContractorJpaEntity contractor;
+    private ContractorJpaModel contractor;
 
     @ManyToOne (cascade = CascadeType.ALL)
-    private CategoryJpaEntity category;
+    private CategoryJpaModel category;
 
     @ManyToOne (cascade = CascadeType.ALL)
-    private SubcategoryJpaEntity subcategory;
+    private SubcategoryJpaModel subcategory;
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<ProposeJpaEntity> proposes;
 
     @OneToMany(cascade = CascadeType.ALL)
-    private List<FileJpaEntity> files;
+    private List<FileJpaModel> files;
 
     @ManyToMany
     @JoinTable(
@@ -53,5 +56,5 @@ public class ProjectJpaEntity {
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "skill_id")
     )
-    private List<SkillJpaEntity> skills;
+    private List<SkillJpaModel> skills;
 }

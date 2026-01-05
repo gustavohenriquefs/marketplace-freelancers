@@ -1,23 +1,19 @@
 package com.ufc.quixada.api.domain.entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
+@Setter
 public class Freelancer {
     private Long id;
-    private String name;
-    private String email;
+    private User user;
     private List<Project> projects;
     private List<Propose> proposes;
-
-    // Construtor, Getters e Setters (omitidos para brevidade)
-    public Freelancer(Long id, String name, String email, double hourlyRate) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-    }
 }

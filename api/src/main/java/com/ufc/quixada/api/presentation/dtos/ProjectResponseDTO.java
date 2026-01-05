@@ -6,7 +6,7 @@ public record ProjectResponseDTO(
         Long id,
         List<Long> categoryIds,
         List<Long> subCategoryIds,
-        String nome,
+        String name,
         String description,
         List<Object> files,
         List<Long> abilitiesId,

@@ -7,19 +7,12 @@ import java.util.Set;
 
 @Entity
 @Table(name = "freelancers")
-public class FreelancerJpaEntity {
+public class FreelancerJpaModel {
 
     @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Getter
-    @Column(nullable = false)
-    private String name;
-
-    @Getter
-    private String email;
 
     @ManyToMany
     @JoinTable(
@@ -27,8 +20,11 @@ public class FreelancerJpaEntity {
             joinColumns = @JoinColumn(name = "freelancer_id"),
             inverseJoinColumns = @JoinColumn(name = "project_id")
     )
-    private Set<ProjectJpaEntity> projects;
+    private Set<ProjectJpaModel> projects;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<ProposeJpaEntity> proposes;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private UserJpaModel user;
 }

@@ -9,18 +9,18 @@ import lombok.Setter;
 import java.util.List;
 
 @Entity
-@Table(name = "category")
+@Table(name = "categories")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class CategoryJpaEntity {
+public class CategoryJpaModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
 
-    public CategoryJpaEntity(String name) {
+    public CategoryJpaModel(String name) {
         this.name = name;
     }
 

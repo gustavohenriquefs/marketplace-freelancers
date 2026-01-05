@@ -19,31 +19,11 @@ import java.util.List;
 public class FreelancerController {
 
     private final GetFreelancers getFreelancersUseCase;
-    private final IssuePropose issuePropose;
-    private final ProposeMapper proposeMapper;
     private final FreelancerMapper freelancerMapper;
 
-    public FreelancerController(GetFreelancers useCase, IssuePropose issuePropose, FreelancerMapper freelancerMapper) {
+    public FreelancerController(GetFreelancers useCase, FreelancerMapper freelancerMapper) {
         this.getFreelancersUseCase = useCase;
-        this.issuePropose = issuePropose;
         this.freelancerMapper = freelancerMapper;
-        this.proposeMapper = ProposeMapper.INSTANCE;
-    }
-
-    @PostMapping("/projects/{idProject}/proposes")
-    public ResponseEntity<ProposeResponseDTO> issuePropose(
-            @PathVariable String idProject,
-            @PathVariable String idPropose,
-            @RequestBody CreateProposeRequestDTO proposeRequestDTO
-    ) {
-        // 1. Converte DTO (JSON) -> Domínio
-        Propose proposeDomain = proposeMapper.toDomain(proposeRequestDTO);
-        // 2. Executa Use Case (Retorna Domínio)
-        Propose createdProposeDomain = issuePropose.execute(proposeDomain);
-        // 3. Converte Domínio -> DTO (JSON)
-        ProposeResponseDTO proposeResponseDTO = proposeMapper.toDTO(createdProposeDomain);
-
-        return ResponseEntity.status(201).body(proposeResponseDTO);
     }
 
     @GetMapping
