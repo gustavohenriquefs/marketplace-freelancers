@@ -30,6 +30,7 @@ import com.ufc.quixada.api.infrastructure.repositories.SubcategoryRepositoryImpl
 import com.ufc.quixada.api.infrastructure.repositories.UserJpaRepository;
 import com.ufc.quixada.api.infrastructure.repositories.UserRepositoryImpl;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import jakarta.persistence.EntityManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -78,9 +79,8 @@ public class DomainConfig {
     }
 
     @Bean
-    public IssuePropose issuePropose(JpaProposeRepository jpaRepository, ProposeMapper mapper) {
-        var repo = new ProposeRepositoryImpl(jpaRepository, mapper);
-        return new IssuePropose(repo);
+    public IssuePropose issuePropose(ProposeRepository proposeRepository) {
+        return new IssuePropose(proposeRepository);
     }
 
     @Bean
@@ -94,9 +94,8 @@ public class DomainConfig {
     }
 
     @Bean
-    public AnswerPropose answerPropose(JpaProposeRepository jpaRepository, ProposeMapper mapper) {
-        var repo = new ProposeRepositoryImpl(jpaRepository, mapper);
-        return new AnswerPropose(repo);
+    public AnswerPropose answerPropose(ProposeRepository proposeRepository) {
+        return new AnswerPropose(proposeRepository);
     }
 
     @Bean
@@ -117,18 +116,20 @@ public class DomainConfig {
     }
 
     @Bean
-    public ProjectRepository projectRepository(JpaProjectRepository jpaRepository, ProjectMapper mapper){
+    public ProjectRepository projectRepository(JpaProjectRepository jpaRepository, ProjectMapper mapper, EntityManager entityManager){
         return new ProjectRepositoryImpl(
                 jpaRepository,
-                mapper
+                mapper,
+                entityManager
         );
     }
 
     @Bean
-    public ProposeRepository proposeRepository(JpaProposeRepository jpaRepository, ProposeMapper mapper){
+    public ProposeRepository proposeRepository(JpaProposeRepository jpaRepository, ProposeMapper mapper, EntityManager entityManager){
         return new ProposeRepositoryImpl(
                 jpaRepository,
-                mapper
+                mapper,
+                entityManager
         );
     }
 
