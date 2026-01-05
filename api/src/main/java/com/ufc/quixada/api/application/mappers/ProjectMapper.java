@@ -3,8 +3,10 @@ package com.ufc.quixada.api.application.mappers;
 import com.ufc.quixada.api.domain.entities.*;
 import com.ufc.quixada.api.infrastructure.models.ProjectJpaModel;
 import com.ufc.quixada.api.presentation.dtos.*;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
 import java.util.Collections;
@@ -17,13 +19,15 @@ import java.util.List;
                 SubcategoryMapper.class,
                 CategoryMapper.class,
                 ProposeMapper.class,
+                SkillMapper.class,
+                FileMapper.class,
         }
 )
 public interface ProjectMapper {
 
     // ===== Mapeamento de DTO de entrada para Domain =====
     
-    @Mapping(target = "files", expression = "java(java.util.Collections.emptyList())")
+    @Mapping(target = "files", source = "files", qualifiedByName = "mockFilesDTOToDomain")
     @Mapping(target = "category", source = "categoryId", qualifiedByName = "mapCategory")
     @Mapping(target = "subcategory", source = "subcategoryId", qualifiedByName = "mapSubcategory")
     @Mapping(target = "skills", source = "skillsIds", qualifiedByName = "mapSkills")
@@ -40,15 +44,39 @@ public interface ProjectMapper {
     @Mapping(target = "contractor", source = "contractor", qualifiedByName = "contractorToDTO")
     @Mapping(target = "files", source = "files", qualifiedByName = "filesToDTO")
     @Mapping(target = "skills", source = "skills", qualifiedByName = "skillsToDTO")
+    @Mapping(target = "proposes", source = "proposes", qualifiedByName = "proposesToDTO")
     ProjectResponseDTO toDto(Project project);
 
     // ===== Mapeamento entre Domain e JPA =====
     
-    @Mapping(target = "proposes", ignore = true)
-    @Mapping(target = "files", ignore = true)
     ProjectJpaModel toJpaEntity(Project project);
 
-    @Mapping(target = "proposes", ignore = true)
+    @AfterMapping
+    default void attachFilesToProject(@MappingTarget ProjectJpaModel projectJpaModel) {
+        if (projectJpaModel.getFiles() == null || projectJpaModel.getFiles().isEmpty()) {
+            return;
+        }
+
+        for (var file : projectJpaModel.getFiles()) {
+            if (file != null) {
+                file.setProject(projectJpaModel);
+            }
+        }
+    }
+
+    @AfterMapping
+    default void attachProposesToProject(@MappingTarget ProjectJpaModel projectJpaModel) {
+        if (projectJpaModel.getProposes() == null || projectJpaModel.getProposes().isEmpty()) {
+            return;
+        }
+
+        for (var propose : projectJpaModel.getProposes()) {
+            if (propose != null) {
+                propose.setProject(projectJpaModel);
+            }
+        }
+    }
+
     @Mapping(target = "contractor.user.freelancerProfile", ignore = true)
     @Mapping(target = "contractor.user.contractorProfile", ignore = true)
     @Mapping(target = "contractor.projects", ignore = true)
@@ -139,5 +167,33 @@ public interface ProjectMapper {
         return skills.stream()
                 .map(skill -> new SkillDTO(skill.getId(), skill.getName()))
                 .toList();
+    }
+
+    @Named("proposesToDTO")
+    default List<ProposeDTO> proposesToDTO(List<Propose> proposes) {
+        if (proposes == null || proposes.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return proposes.stream()
+                .map(propose -> new ProposeDTO(
+                        propose.getId(),
+                        propose.getStatus(),
+                        propose.getPrice(),
+                        propose.getDuration(),
+                        propose.getDescription(),
+                        propose.getCreatedAt(),
+                        propose.getUpdatedAt(),
+                        propose.getFreelancer().getId()
+                ))
+                .toList();
+    }
+
+    @Named("mockFilesDTOToDomain")
+    default List<File> mockFilesDTOToDomain(List<String> filesDTO) {
+        if (filesDTO == null || filesDTO.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return filesDTO.stream()
+                .map(fileName -> new File(null, fileName, "pdf", "https://pdfobject.com/pdf/sample.pdf")).toList();
     }
 }

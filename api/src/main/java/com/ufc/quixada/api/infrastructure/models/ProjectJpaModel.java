@@ -14,6 +14,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -42,8 +43,8 @@ public class ProjectJpaModel {
     @UpdateTimestamp
     private LocalDate updatedAt;
 
-    @ManyToOne
-    @JoinColumn(name = "contractor_id")
+        @ManyToOne(fetch = FetchType.LAZY, optional = false)
+        @JoinColumn(name = "contractor_id", nullable = false)
     private ContractorJpaModel contractor;
 
     @ManyToOne
@@ -55,12 +56,21 @@ public class ProjectJpaModel {
     private SubcategoryJpaModel subcategory;
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ProposeJpaEntity> proposes;
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<FileJpaModel> files;
+
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+            name = "freelancer_projects",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "freelancer_id")
+    )
+    private Set<FreelancerJpaModel> freelancers;
 
     @ManyToMany
     @JoinTable(

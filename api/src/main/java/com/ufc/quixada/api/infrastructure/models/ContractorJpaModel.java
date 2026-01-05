@@ -19,7 +19,7 @@ public class ContractorJpaModel {
     private Long id;
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "contractor", fetch = FetchType.LAZY)
     private List<ProjectJpaModel> projects;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)

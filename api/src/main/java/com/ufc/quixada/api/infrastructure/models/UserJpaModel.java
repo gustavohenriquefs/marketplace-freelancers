@@ -35,10 +35,12 @@ public class UserJpaModel implements UserDetails {
 
     @JsonIgnore
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "freelancer_profile_id")
     private FreelancerJpaModel freelancerProfile;
 
     @JsonIgnore
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "contractor_profile_id")
     private ContractorJpaModel contractorProfile;
 
     @Override
