@@ -2,7 +2,6 @@ package com.ufc.quixada.api.infrastructure.repositories;
 
 import com.ufc.quixada.api.application.mappers.ProposeMapper;
 import com.ufc.quixada.api.domain.entities.Propose;
-import com.ufc.quixada.api.domain.enums.ProposeStatus;
 import com.ufc.quixada.api.domain.repositories.ProposeRepository;
 import com.ufc.quixada.api.infrastructure.models.ProposeJpaEntity;
 
