@@ -5,7 +5,7 @@ import com.ufc.quixada.api.presentation.validators.ValueOfEnum;
 import jakarta.validation.constraints.NotNull;
 
 public record AnswerProposeRequestDTO(
-        @ValueOfEnum(enumClass = ProposeStatus.class)
-        @NotNull
-        ProposeStatus newStatus
+        @ValueOfEnum(enumClass = ProposeStatus.class, message = "Status inválido. Use: ACCEPTED, REJECTED, WAITING_ANALYSIS, CANCELED")
+        @NotNull(message = "Status não pode ser nulo")
+        String newStatus
 ) { }

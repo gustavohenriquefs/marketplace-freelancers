@@ -40,10 +40,11 @@ public record ProjectRequestDTO(
     @NotNull(message = "Sub-category ID is required")
     Long subCategoryId,
 
-    // Validates each item inside the list if they were DTOs (using @Valid)
-    // @NotEmpty ensures the list itself isn't empty
+    // Opcional - Pode ser null ou vazio
+    // Para upload de arquivos com multipart/form-data
     List<MultipartFile> files,
 
-    @NotEmpty(message = "At least one ability is required")
+    // Pelo menos uma skill é necessária
+    @NotEmpty(message = "At least one skill is required")
     List<@NotNull Long> skillsIds
 ) {}

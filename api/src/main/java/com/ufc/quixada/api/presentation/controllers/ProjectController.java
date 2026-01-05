@@ -7,6 +7,7 @@ import com.ufc.quixada.api.application.usecases.AnswerPropose;
 import com.ufc.quixada.api.application.usecases.CreateProject;
 import com.ufc.quixada.api.application.usecases.IssuePropose;
 import com.ufc.quixada.api.domain.entities.Project;
+import com.ufc.quixada.api.domain.enums.ProposeStatus;
 import com.ufc.quixada.api.presentation.dtos.*;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -43,23 +44,30 @@ public class ProjectController {
         log.info("=== Respondendo proposta ===");
         log.info("ProposeId: {}, NewStatus: {}", proposeId, request.newStatus());
 
+        // Converte String → Enum
+        ProposeStatus status = ProposeStatus.valueOf(request.newStatus());
+
         UpdateProposeStatusCommand command =
-                new UpdateProposeStatusCommand(proposeId, request.newStatus());
+                new UpdateProposeStatusCommand(proposeId, status);
 
         this.answerPropose.execute(command);
+
         log.info("Proposta respondida com sucesso");
 
         return ResponseEntity.noContent().build();
 
     }
 
-    @PostMapping()
-    public ResponseEntity<ProjectResponseDTO> createProject(@Valid @ModelAttribute ProjectRequestDTO projectReq) {
+    @PostMapping(consumes = "application/json")
+    public ResponseEntity<ProjectResponseDTO> createProject(@Valid @RequestBody ProjectRequestDTO projectReq) {
         Project project = this.projectMapper.toDomain(projectReq);
+
         Project result = this.createProjectUseCase.execute(project);
 
         if (result != null) {
-            return ResponseEntity.ok(projectMapper.toDto(result));
+            ProjectResponseDTO dto = projectMapper.toDto(result);
+            System.out.println("🎯 Retornando DTO");
+            return ResponseEntity.ok(dto);
         }
 
         return ResponseEntity.notFound().build();
