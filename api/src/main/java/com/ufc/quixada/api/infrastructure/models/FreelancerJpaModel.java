@@ -20,16 +20,11 @@ public class FreelancerJpaModel {
     private Long id;
 
     @JsonIgnore
-    @ManyToMany
-    @JoinTable(
-            name = "freelancer_projects",
-            joinColumns = @JoinColumn(name = "freelancer_id"),
-            inverseJoinColumns = @JoinColumn(name = "project_id")
-    )
+        @ManyToMany(mappedBy = "freelancers")
     private Set<ProjectJpaModel> projects;
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "freelancer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<ProposeJpaEntity> proposes;
 
     @OneToOne
