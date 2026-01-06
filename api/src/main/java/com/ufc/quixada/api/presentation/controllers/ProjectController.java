@@ -98,7 +98,7 @@ public class ProjectController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/project/{projectId}/proposes")
+    @PostMapping("/{projectId}/proposes")
     public ResponseEntity<Void> createPropose(
             @PathVariable Long projectId,
             @Valid @RequestBody CreateProposeRequestDTO request
