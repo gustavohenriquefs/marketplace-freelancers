@@ -1,8 +1,7 @@
 package com.ufc.quixada.api.presentation.dtos;
 
-public record CategoryDTO(
+public record SkillResponseDTO(
         Long id,
         String name
 ) {}
-
 

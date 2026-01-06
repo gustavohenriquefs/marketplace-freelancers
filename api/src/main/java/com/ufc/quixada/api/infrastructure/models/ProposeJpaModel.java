@@ -25,6 +25,7 @@ public class ProposeJpaEntity {
     @Column()
     private int duration;
 
+    @Enumerated(EnumType.STRING)
     @Column()
     private ProposeStatus status;
 

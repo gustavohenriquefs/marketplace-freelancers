@@ -12,7 +12,7 @@ import java.util.List;
  * DTO para criar projeto via JSON (sem upload de arquivos).
  * Para upload de arquivos, use ProjectRequestDTO com multipart/form-data.
  */
-public record CreateProjectJsonDTO(
+public record CreateProjectRequestDTO(
     @NotBlank(message = "Project name cannot be empty")
     @Size(min = 3, max = 100, message = "Name must be between 3 and 100 characters")
     String name,

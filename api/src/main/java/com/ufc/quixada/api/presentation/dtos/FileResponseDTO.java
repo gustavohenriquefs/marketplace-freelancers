@@ -1,6 +1,6 @@
 package com.ufc.quixada.api.presentation.dtos;
 
-public record FileDTO(
+public record FileResponseDTO(
         Long id,
         String fileName,
         String fileType,

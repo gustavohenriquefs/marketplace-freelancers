@@ -22,11 +22,11 @@ public record ProjectResponseDTO(
         Boolean isPublic,
         LocalDate createdAt,
         LocalDate updatedAt,
-        CategoryDTO category,
-        SubcategoryDTO subcategory,
-        ContractorDTO contractor,
-        List<ProposeDTO> proposes,
-        List<FileDTO> files,
-        List<SkillDTO> skills
+        CategoryResponseDTO category,
+        SubcategoryResponseDTO subcategory,
+        ContractorResponseDTO contractor,
+        List<ProposeResponseDTO> proposes,
+        List<FileResponseDTO> files,
+        List<SkillResponseDTO> skills
 ) {}
 
