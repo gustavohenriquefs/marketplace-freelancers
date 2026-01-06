@@ -27,7 +27,6 @@ public class OpenApiConfig {
                                         .scheme("bearer")
                                         .bearerFormat("JWT")
                         ))
-                // Aplica globalmente (Swagger UI mostra Authorize e envia o header automaticamente)
                 .addSecurityItem(new SecurityRequirement().addList(SECURITY_SCHEME_NAME))
                 .info(new Info()
                         .title("API Quixadá")

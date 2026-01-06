@@ -7,6 +7,13 @@ import java.util.Optional;
 
 public interface ProjectRepository {
     Project createProject(Project project);
-    List<Project> findAll();
-    Optional<Project> findById(Long id);
+    Project updateProject(Project project);
+    List<Project> findAllVisible(Long userId);
+    Optional<Project> findByIdIfVisible(Long id, Long userId);
+
+    List<Project> findAllByFreelancerId(Long freelancerId);
+
+    List<Project> findAllByContractorId(Long contractorId);
+
+    boolean userCanViewProject(Long userId, Long projectId);
 }

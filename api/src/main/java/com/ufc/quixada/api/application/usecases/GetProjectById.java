@@ -11,9 +11,13 @@ public class GetProjectById {
         this.projectRepository = projectRepository;
     }
 
-    public Project execute(Long id) {
-        return projectRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Project not found with id: " + id));
+    public Project execute(Long id, Long userId) {
+        if (!projectRepository.userCanViewProject(userId, id)) {
+            throw new NotFoundException("Projeto não encontrado com id: " + id);
+        }
+        Project project = projectRepository.findByIdIfVisible(id, userId)
+                .orElseThrow(() -> new NotFoundException("Projeto não encontrado com id: " + id));
+                return project;
     }
 }
 

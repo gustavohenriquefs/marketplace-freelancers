@@ -4,15 +4,15 @@ import com.ufc.quixada.api.application.command.CreateProposeCommand;
 import com.ufc.quixada.api.application.command.UpdateProposeStatusCommand;
 import com.ufc.quixada.api.application.mappers.ProjectMapper;
 import com.ufc.quixada.api.application.mappers.ProposeMapper;
+import com.ufc.quixada.api.application.mappers.UserMapper;
 import com.ufc.quixada.api.application.usecases.*;
 import com.ufc.quixada.api.domain.entities.Project;
 import com.ufc.quixada.api.domain.entities.Propose;
+import com.ufc.quixada.api.domain.entities.User;
 import com.ufc.quixada.api.domain.enums.ProposeStatus;
 import com.ufc.quixada.api.infrastructure.models.UserJpaModel;
 import com.ufc.quixada.api.presentation.dtos.*;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -23,56 +23,98 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/projects")
 public class ProjectController {
-    private static final Logger log = LoggerFactory.getLogger(ProjectController.class);
-
-    private final CreateProject createProjectUseCase;
-    private final GetAllProjects getAllProjectsUseCase;
-    private final GetProjectById getProjectByIdUseCase;
-    private final CreatePropose createPropose;
+    private final CreateProject createProject;
+    private final GetAllProjects getAllProjects;
+    private final GetAllContractorProjects getAllContractorProjects;
+    private final GetAllFreelancerProjects getAllFreelancerProjects;
+    private final GetProjectById getProjectById;
+    private final IssuePropose createPropose;
 
     private final AnswerPropose answerPropose;
     private final ProjectMapper projectMapper;
     private final ProposeMapper proposeMapper;
+    private final UserMapper userMapper;
 
     public ProjectController(
             CreateProject createProject,
             GetAllProjects getAllProjects,
+            GetAllContractorProjects getAllContractorProjects,
+            GetAllFreelancerProjects getAllFreelancerProjects,
             GetProjectById getProjectById,
             AnswerPropose answerPropose,
-            CreatePropose createPropose,
+            IssuePropose createPropose,
             ProjectMapper projectMapper,
-            ProposeMapper proposeMapper
+            ProposeMapper proposeMapper,
+            UserMapper userMapper
     ) {
-        this.createProjectUseCase = createProject;
-        this.getAllProjectsUseCase = getAllProjects;
-        this.getProjectByIdUseCase = getProjectById;
+        this.createProject = createProject;
+        this.getAllProjects = getAllProjects;
+        this.getAllContractorProjects = getAllContractorProjects;
+        this.getAllFreelancerProjects = getAllFreelancerProjects;
+        this.getProjectById = getProjectById;
         this.answerPropose = answerPropose;
         this.createPropose = createPropose;
         this.projectMapper = projectMapper;
         this.proposeMapper = proposeMapper;
+        this.userMapper = userMapper;
     }
 
     @GetMapping
     public ResponseEntity<List<ProjectResponseDTO>> getAllProjects() {
-        log.info("=== Buscando todos os projetos ===");
 
-        List<Project> projects = getAllProjectsUseCase.execute();
+        UserJpaModel user = (UserJpaModel) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
+        User userDomain = userMapper.toDomain(user);
+
+        List<Project> projects = getAllProjects.execute(userDomain.getId());
         List<ProjectResponseDTO> response = projects.stream()
                 .map(projectMapper::toDto)
                 .toList();
 
-        log.info("Total de projetos encontrados: {}", response.size());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/freelancer/findAll")
+    public ResponseEntity<List<ProjectResponseDTO>> getAllFreelancerProjects() {
+
+        UserJpaModel user = (UserJpaModel) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
+
+        if (user.getFreelancerProfile() == null) {
+            throw new IllegalStateException("Usuário não tem perfil de freelancer para buscar projetos.");
+        }
+
+        List<Project> projects = getAllFreelancerProjects.execute(user.getFreelancerProfile().getId());
+        List<ProjectResponseDTO> response = projects.stream()
+                .map(projectMapper::toDto)
+                .toList();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/contractor/findAll")
+    public ResponseEntity<List<ProjectResponseDTO>> getAllContractorProjects() {
+
+        UserJpaModel user = (UserJpaModel) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
+
+        List<Project> projects = getAllContractorProjects.execute(user.getContractorProfile().getId());
+        List<ProjectResponseDTO> response = projects.stream()
+                .map(projectMapper::toDto)
+                .toList();
+
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProjectResponseDTO> getProjectById(@PathVariable Long id) {
-        log.info("=== Buscando projeto por ID: {} ===", id);
 
-        Project project = getProjectByIdUseCase.execute(id);
+        Long userId = null;
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof UserJpaModel u) {
+            userId = u.getId();
+        }
+
+        Project project = getProjectById.execute(id, userId);
         ProjectResponseDTO response = projectMapper.toDto(project);
 
-        log.info("Projeto encontrado: {}", response);
         return ResponseEntity.ok(response);
     }
 
@@ -81,19 +123,21 @@ public class ProjectController {
             @PathVariable Long proposeId,
             @Valid @RequestBody AnswerProposeRequestDTO request
     ) {
-        log.info("=== Respondendo proposta ===");
-        log.info("ProposeId: {}, NewStatus: {}", proposeId, request.newStatus());
 
-        // Converte String → Enum
         ProposeStatus status = ProposeStatus.valueOf(request.newStatus());
 
+        UserJpaModel user = (UserJpaModel) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
+
+        if (user.getContractorProfile() == null) {
+            throw new IllegalStateException("Usuário não tem perfil de contratante para responder propostas.");
+        }
+
+        User userDomain = userMapper.toDomain(user);
+
         UpdateProposeStatusCommand command =
-                new UpdateProposeStatusCommand(proposeId, status);
+            new UpdateProposeStatusCommand(proposeId, status, userDomain);
 
         this.answerPropose.execute(command);
-
-        log.info("Proposta respondida com sucesso");
-
         return ResponseEntity.noContent().build();
     }
 
@@ -103,49 +147,39 @@ public class ProjectController {
             @Valid @RequestBody CreateProposeRequestDTO request
     ) {
         Propose propose = proposeMapper.toDomain(request);
-        // Pega o usuário autenticado a partir do contexto de segurança
         UserJpaModel user = (UserJpaModel) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
 
-        log.info("=== Criando proposta ===");
-        log.info("ProjectId: {}, Propose: {}", projectId, propose);
+        User userDomain = userMapper.toDomain(user);
 
         CreateProposeCommand proposeCommand = new CreateProposeCommand(
                 propose,
-                user.getFreelancerProfile().getId(),
+                userDomain,
                 projectId
         );
 
         this.createPropose.execute(proposeCommand);
-
-        log.info("Proposta respondida com sucesso");
 
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping(consumes = "application/json")
     public ResponseEntity<ProjectResponseDTO> createProject(@Valid @RequestBody CreateProjectRequestDTO projectReq) {
-        log.info("=== Criando projeto via JSON ===");
-        log.info("Project: {}", projectReq);
 
         Project project = this.projectMapper.toDomain(projectReq);
 
-        // Pega o usuário autenticado a partir do contexto de segurança
         UserJpaModel user = (UserJpaModel) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
 
-        // Valida e obtém o ID do perfil de contratante
         if (user.getContractorProfile() == null) {
             throw new IllegalStateException("Usuário não tem um perfil de contratante para criar projetos.");
         }
         Long contractorId = user.getContractorProfile().getId();
 
-        Project result = this.createProjectUseCase.execute(project, contractorId);
+        Project result = this.createProject.execute(project, contractorId);
 
         if (result != null) {
             ProjectResponseDTO dto = projectMapper.toDto(result);
-            log.info("Projeto criado com sucesso: ID={}", result.getId());
             return ResponseEntity.ok(dto);
         }
-        log.warn("Falha ao criar projeto");
         return ResponseEntity.notFound().build();
     }
 }

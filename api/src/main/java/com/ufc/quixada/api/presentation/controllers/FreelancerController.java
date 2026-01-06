@@ -23,10 +23,8 @@ public class FreelancerController {
 
     @GetMapping
     public ResponseEntity<List<FreelancerResponseDTO>> getAll() {
-        // 1. Executa Use Case (Retorna Domínio)
         List<Freelancer> domainList = getFreelancersUseCase.execute();
 
-        // 2. Converte Domínio -> DTO (JSON)
         List<FreelancerResponseDTO> dtoList = domainList.stream()
                 .map(freelancerMapper::toDTO)
                 .toList();

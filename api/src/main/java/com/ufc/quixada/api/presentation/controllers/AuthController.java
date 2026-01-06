@@ -22,7 +22,7 @@ public class AuthController {
 
     private final CreateUser createUser;
     private final AuthenticationManager authenticationManager;
-    private final TokenService tokenService; // Da Infra
+    private final TokenService tokenService;
 
     public AuthController(
             CreateUser createUser, AuthenticationManager authenticationManager,
@@ -34,7 +34,6 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(@RequestBody @Valid RegisterUserRequestDTO dto) {
-        // 1. Converter DTO -> Domain Entity
         User domainUser = new User();
         domainUser.setName(dto.name());
         domainUser.setEmail(dto.email());
@@ -54,10 +53,8 @@ public class AuthController {
         var usernamePassword = new UsernamePasswordAuthenticationToken(dto.email(), dto.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
 
-        // O Principal retornado é o UserModel da Infra (que é UserDetails)
         var userModel = (UserJpaModel) auth.getPrincipal();
 
-        // Gera token usando a entidade da infra (necessário para pegar roles)
         String token = tokenService.generateToken(userModel);
 
         return ResponseEntity.ok(new TokenResponseDTO(token));

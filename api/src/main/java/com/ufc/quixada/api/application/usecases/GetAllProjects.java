@@ -12,8 +12,8 @@ public class GetAllProjects {
         this.projectRepository = projectRepository;
     }
 
-    public List<Project> execute() {
-        return projectRepository.findAll();
+    public List<Project> execute(Long userId) {
+        return projectRepository.findAllVisible(userId);
     }
 }
 

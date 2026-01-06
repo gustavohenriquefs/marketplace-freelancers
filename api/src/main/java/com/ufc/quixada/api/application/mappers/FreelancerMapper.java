@@ -8,7 +8,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-//@Mapper(uses = {MetaRendimentoMapper.class, ItemRendimentoMapper.class})
 @Mapper(componentModel = "spring")
 public interface FreelancerMapper {
 

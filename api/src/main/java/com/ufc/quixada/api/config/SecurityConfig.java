@@ -1,8 +1,5 @@
 package com.ufc.quixada.api.config;
 
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.info.License;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -41,21 +38,16 @@ public class SecurityConfig {
 
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // 1. Libera o Swagger (usando a lista acima)
                         .requestMatchers(SWAGGER_WHITELIST).permitAll()
 
-                        // 2. Libera Login e Registro
                         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
 
-                        // 4. O resto bloqueado
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception
-                        // Sem token (não autenticado): devolve 403 (como você pediu)
                         .authenticationEntryPoint((request, response, authException) ->
                                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "Você precisa se autenticar para acessar esse recurso."))
-                        // Token válido mas sem permissão/role: também 403
                         .accessDeniedHandler((request, response, accessDeniedException) ->
                                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "Você não tem permissão para acessar esse recurso."))
                 )

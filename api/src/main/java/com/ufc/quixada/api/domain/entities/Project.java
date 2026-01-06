@@ -33,8 +33,13 @@ public class Project {
     private List<Propose> proposes;
     private List<File> files;
     private List<Skill> skills;
+    private List<Freelancer> freelancers;
+
+    public boolean isClosed() {
+        return this.status == ProjectStatus.CLOSED;
+    }
+
+    public boolean isOnGoing() {
+        return this.status == ProjectStatus.IN_PROGRESS || this.status == ProjectStatus.WAITING_PAYMENT;
+    }
 }
-// Me deu um susto kasdkakskadjaskdjasdjasdjasdjasdjasdjasdjasdjasdjasdjas
-// Tem que implementar os repositories ainda
-// E vincular no DomainConfig eu acho
-// pq ele não vai conseguir instanciar as classes sem isso

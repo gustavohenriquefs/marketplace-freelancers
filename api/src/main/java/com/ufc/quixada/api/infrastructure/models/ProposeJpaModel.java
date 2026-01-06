@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "propose")
+@Table(name = "proposes")
 @Getter
 @Setter
 public class ProposeJpaModel {

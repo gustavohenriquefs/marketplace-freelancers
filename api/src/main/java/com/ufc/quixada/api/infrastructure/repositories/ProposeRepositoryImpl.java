@@ -73,10 +73,21 @@ public class ProposeRepositoryImpl implements ProposeRepository {
     }
 
     @Override
+    public Optional<Propose> findByFreelancerIdAndProjectId(Long freelancerId, Long projectId) {
+        return jpaProposeRepository.findByFreelancerIdAndProjectId(freelancerId, projectId)
+                .map(proposeMapper::toDomain);
+    }
+
+    @Override
     public void save(Propose propose) {
         ProposeJpaModel entity = proposeMapper.toJpaEntity(propose);
         attachManagedRefs(entity);
         jpaProposeRepository.save(entity);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        jpaProposeRepository.deleteById(id);
     }
 
 }
