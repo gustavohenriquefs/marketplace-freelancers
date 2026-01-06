@@ -40,7 +40,8 @@ public class ProjectJpaModel {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 32)
     private ExperienceLevel experienceLevel;
-    
+
+
     private Long deadlineInDays;
     private Boolean isPublic;
 
@@ -64,7 +65,7 @@ public class ProjectJpaModel {
 
     @JsonIgnore
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<ProposeJpaEntity> proposes;
+    private List<ProposeJpaModel> proposes;
 
     @JsonIgnore
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

@@ -138,18 +138,17 @@ public class ProjectController {
             new UpdateProposeStatusCommand(proposeId, status, userDomain);
 
         this.answerPropose.execute(command);
-
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/project/{projectId}/proposes")
+    @PostMapping("/{projectId}/proposes")
     public ResponseEntity<Void> createPropose(
             @PathVariable Long projectId,
             @Valid @RequestBody CreateProposeRequestDTO request
     ) {
         Propose propose = proposeMapper.toDomain(request);
         UserJpaModel user = (UserJpaModel) Objects.requireNonNull(SecurityContextHolder.getContext().getAuthentication()).getPrincipal();
-        
+
         User userDomain = userMapper.toDomain(user);
 
         CreateProposeCommand proposeCommand = new CreateProposeCommand(
@@ -164,7 +163,7 @@ public class ProjectController {
     }
 
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<ProjectResponseDTO> createProject(@Valid @RequestBody CreateProjectJsonDTO projectReq) {
+    public ResponseEntity<ProjectResponseDTO> createProject(@Valid @RequestBody CreateProjectRequestDTO projectReq) {
 
         Project project = this.projectMapper.toDomain(projectReq);
 

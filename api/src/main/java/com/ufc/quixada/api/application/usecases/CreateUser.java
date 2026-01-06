@@ -1,5 +1,6 @@
 package com.ufc.quixada.api.application.usecases;
 
+import com.ufc.quixada.api.application.exceptions.UserAlreadyExistsException;
 import com.ufc.quixada.api.domain.entities.Contractor;
 import com.ufc.quixada.api.domain.entities.Freelancer;
 import com.ufc.quixada.api.domain.entities.User;
@@ -20,8 +21,9 @@ public class CreateUser {
     }
 
     public void execute(User userDomain) {
+        // Regras de negócio (ex: validar email)
         if(userRepository.findByEmail(userDomain.getEmail()).isPresent()){
-            throw new RuntimeException("Email já existe");
+            throw new UserAlreadyExistsException(userDomain.getEmail());
         }
 
         String encodedPass = passwordEncoder.encode(userDomain.getPassword());

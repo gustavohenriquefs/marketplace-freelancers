@@ -5,14 +5,14 @@ import com.ufc.quixada.api.domain.entities.Project;
 import com.ufc.quixada.api.domain.entities.Propose;
 import com.ufc.quixada.api.infrastructure.models.FreelancerJpaModel;
 import com.ufc.quixada.api.infrastructure.models.ProjectJpaModel;
-import com.ufc.quixada.api.infrastructure.models.ProposeJpaEntity;
+import com.ufc.quixada.api.infrastructure.models.ProposeJpaModel;
 import com.ufc.quixada.api.presentation.dtos.AnswerProposeRequestDTO;
 import com.ufc.quixada.api.presentation.dtos.CreateProposeRequestDTO;
 import com.ufc.quixada.api.presentation.dtos.ProposeResponseDTO;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import org.mapstruct.AfterMapping;
 import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
@@ -21,7 +21,7 @@ public interface ProposeMapper {
 
     @Mapping(target = "freelancer", source = "freelancer", qualifiedByName = "freelancerRef")
     @Mapping(target = "project", source = "project", qualifiedByName = "projectRef")
-    ProposeJpaEntity toJpaEntity(Propose propose);
+    ProposeJpaModel toJpaEntity(Propose propose);
 
     @Named("freelancerRef")
     default FreelancerJpaModel freelancerRef(Freelancer freelancer) {
@@ -45,10 +45,10 @@ public interface ProposeMapper {
 
     @Mapping(target = "freelancer", ignore = true)
     @Mapping(target = "project", ignore = true)
-    Propose toDomain(ProposeJpaEntity proposeJpaEntity);
+    Propose toDomain(ProposeJpaModel proposeJpaEntity);
 
     @AfterMapping
-    default void setShallowRefs(ProposeJpaEntity source, @MappingTarget Propose target) {
+    default void setShallowRefs(ProposeJpaModel source, @MappingTarget Propose target) {
         if (source == null || target == null) return;
         if (source.getFreelancer() != null) {
             target.setFreelancer(freelancerShallow(source.getFreelancer()));

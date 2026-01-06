@@ -4,9 +4,9 @@ import com.ufc.quixada.api.application.usecases.CreateUser;
 import com.ufc.quixada.api.domain.entities.User;
 import com.ufc.quixada.api.infrastructure.models.UserJpaModel;
 import com.ufc.quixada.api.infrastructure.services.TokenService;
-import com.ufc.quixada.api.presentation.dtos.LoginDTO;
-import com.ufc.quixada.api.presentation.dtos.RegisterUserDTO;
-import com.ufc.quixada.api.presentation.dtos.TokenDTO;
+import com.ufc.quixada.api.presentation.dtos.LoginRequestDTO;
+import com.ufc.quixada.api.presentation.dtos.RegisterUserRequestDTO;
+import com.ufc.quixada.api.presentation.dtos.TokenResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,32 +20,35 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final CreateUser createUserUseCase;
+    private final CreateUser createUser;
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
 
     public AuthController(
-            CreateUser createUserUseCase, AuthenticationManager authenticationManager,
+            CreateUser createUser, AuthenticationManager authenticationManager,
             TokenService tokenService){
-        this.createUserUseCase = createUserUseCase;
+        this.createUser = createUser;
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody @Valid RegisterUserDTO dto) {
+    public ResponseEntity<Void> register(@RequestBody @Valid RegisterUserRequestDTO dto) {
         User domainUser = new User();
         domainUser.setName(dto.name());
         domainUser.setEmail(dto.email());
         domainUser.setPassword(dto.password());
 
-        createUserUseCase.execute(domainUser);
+        // 2. Chamar UseCase
+        createUser.execute(domainUser);
 
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDTO> login(@RequestBody @Valid LoginDTO dto) {
+    public ResponseEntity<TokenResponseDTO> login(@RequestBody LoginRequestDTO dto) {
+        // O Login é um caso especial onde frequentemente usamos o AuthManager do Spring direto
+        // pois ele já bate no banco e valida hash.
 
         var usernamePassword = new UsernamePasswordAuthenticationToken(dto.email(), dto.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
@@ -54,6 +57,6 @@ public class AuthController {
 
         String token = tokenService.generateToken(userModel);
 
-        return ResponseEntity.ok(new TokenDTO(token));
+        return ResponseEntity.ok(new TokenResponseDTO(token));
     }
 }

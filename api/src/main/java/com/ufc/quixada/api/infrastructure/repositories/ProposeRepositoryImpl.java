@@ -5,7 +5,7 @@ import com.ufc.quixada.api.domain.entities.Propose;
 import com.ufc.quixada.api.domain.repositories.ProposeRepository;
 import com.ufc.quixada.api.infrastructure.models.FreelancerJpaModel;
 import com.ufc.quixada.api.infrastructure.models.ProjectJpaModel;
-import com.ufc.quixada.api.infrastructure.models.ProposeJpaEntity;
+import com.ufc.quixada.api.infrastructure.models.ProposeJpaModel;
 import jakarta.persistence.EntityManager;
 
 import java.util.Optional;
@@ -23,9 +23,9 @@ public class ProposeRepositoryImpl implements ProposeRepository {
 
     /**
      * Converts detached associated entities (project and freelancer) into managed JPA
-     * references before persisting a {@link ProposeJpaEntity}.
+     * references before persisting a {@link ProposeJpaModel}.
      * <p>
-     * When a {@code ProposeJpaEntity} is mapped from the domain model, its
+     * When a {@code ProposeJpaModel} is mapped from the domain model, its
      * {@link ProjectJpaModel} and {@link FreelancerJpaModel} references may be
      * detached instances that already exist in the database. Passing such detached
      * entities directly to the persistence context can lead to
@@ -36,7 +36,7 @@ public class ProposeRepositoryImpl implements ProposeRepository {
      * before calling repository {@code save} operations on proposals that reference
      * existing project or freelancer records.
      */
-    private void attachManagedRefs(ProposeJpaEntity entity) {
+    private void attachManagedRefs(ProposeJpaModel entity) {
         if (entity == null) {
             return;
         }
@@ -52,9 +52,9 @@ public class ProposeRepositoryImpl implements ProposeRepository {
 
     @Override
     public Propose create(Propose propose) {
-        ProposeJpaEntity entity = proposeMapper.toJpaEntity(propose);
+        ProposeJpaModel entity = proposeMapper.toJpaEntity(propose);
         attachManagedRefs(entity);
-        ProposeJpaEntity savedEntity = jpaProposeRepository.save(entity);
+        ProposeJpaModel savedEntity = jpaProposeRepository.save(entity);
         return proposeMapper.toDomain(savedEntity);
     }
 
@@ -80,7 +80,7 @@ public class ProposeRepositoryImpl implements ProposeRepository {
 
     @Override
     public void save(Propose propose) {
-        ProposeJpaEntity entity = proposeMapper.toJpaEntity(propose);
+        ProposeJpaModel entity = proposeMapper.toJpaEntity(propose);
         attachManagedRefs(entity);
         jpaProposeRepository.save(entity);
     }

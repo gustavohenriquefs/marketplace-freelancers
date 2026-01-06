@@ -4,5 +4,9 @@ public enum ProposeStatus {
     ACCEPTED,
     REJECTED,
     WAITING_ANALYSIS,
-    CANCELED
+    CANCELED;
+
+    public boolean isFinalized() {
+        return this == ACCEPTED || this == REJECTED || this == CANCELED;
+    }
 }

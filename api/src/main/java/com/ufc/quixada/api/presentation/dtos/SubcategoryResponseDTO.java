@@ -1,6 +1,6 @@
 package com.ufc.quixada.api.presentation.dtos;
 
-public record SubcategoryDTO(
+public record SubcategoryResponseDTO(
         Long id,
         String name,
         Long categoryId

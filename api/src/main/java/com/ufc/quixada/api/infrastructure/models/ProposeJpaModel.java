@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Table(name = "proposes")
 @Getter
 @Setter
-public class ProposeJpaEntity {
+public class ProposeJpaModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,8 +25,8 @@ public class ProposeJpaEntity {
     @Column()
     private int duration;
 
-    @Enumerated(jakarta.persistence.EnumType.STRING)
-    @Column(nullable = false, length = 32)
+    @Enumerated(EnumType.STRING)
+    @Column()
     private ProposeStatus status;
 
     @Column()
