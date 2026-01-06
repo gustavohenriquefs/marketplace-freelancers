@@ -22,7 +22,7 @@ public class Propose {
     private Project project;
 
     public Boolean isFinalized() {
-        return this.status == ProposeStatus.ACCEPTED || this.status == ProposeStatus.REJECTED || this.status ==  ProposeStatus.CANCELED;
+        return this.status != null && this.status.isFinalized();
     }
 
     public void updateStatus(ProposeStatus proposeStatus) {

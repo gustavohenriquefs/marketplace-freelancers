@@ -4,7 +4,6 @@ import com.ufc.quixada.api.application.command.CreateProposeCommand;
 import com.ufc.quixada.api.application.command.UpdateProposeStatusCommand;
 import com.ufc.quixada.api.application.mappers.ProjectMapper;
 import com.ufc.quixada.api.application.mappers.ProposeMapper;
-import com.ufc.quixada.api.application.mappers.UserMapper;
 import com.ufc.quixada.api.application.usecases.*;
 import com.ufc.quixada.api.domain.entities.Project;
 import com.ufc.quixada.api.domain.entities.Propose;
@@ -124,7 +123,7 @@ public class ProjectController {
     }
 
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<ProjectResponseDTO> createProject(@Valid @RequestBody CreateProjectJsonDTO projectReq) {
+    public ResponseEntity<ProjectResponseDTO> createProject(@Valid @RequestBody CreateProjectRequestDTO projectReq) {
         log.info("=== Criando projeto via JSON ===");
         log.info("Project: {}", projectReq);
 
