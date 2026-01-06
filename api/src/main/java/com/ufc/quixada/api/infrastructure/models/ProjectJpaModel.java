@@ -32,8 +32,15 @@ public class ProjectJpaModel {
     private String name;
     private String description;
     private BigDecimal budget;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 32)
     private ProjectStatus status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 32)
     private ExperienceLevel experienceLevel;
+    
     private Long deadlineInDays;
     private Boolean isPublic;
 
@@ -66,7 +73,7 @@ public class ProjectJpaModel {
     @JsonIgnore
     @ManyToMany
     @JoinTable(
-            name = "freelancer_projects",
+            name = "project_freelancers",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "freelancer_id")
     )

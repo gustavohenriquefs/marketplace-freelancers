@@ -10,16 +10,16 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public record ProjectRequestDTO(
-    @NotBlank(message = "Project name cannot be empty")
-    @Size(min = 3, max = 100, message = "Name must be between 3 and 100 characters")
+    @NotBlank(message = "O nome do projeto não pode estar vazio")
+    @Size(min = 3, max = 100, message = "O nome deve ter entre 3 e 100 caracteres")
     String name,
 
-    @NotBlank(message = "Description is required")
-    @Size(max = 2000)
+    @NotBlank(message = "A descrição não pode estar vazia")
+    @Size(max = 2000, message = "A descrição deve ter no máximo 2000 caracteres")
     String description,
 
-    @NotNull(message = "Budget is required")
-    @DecimalMin(value = "0.0", inclusive = false, message = "Budget must be greater than 0")
+    @NotNull(message = "O orçamento é obrigatório")
+    @DecimalMin(value = "0.0", inclusive = false, message = "O orçamento deve ser maior que 0")
     BigDecimal budget,
 
     @ValueOfEnum(enumClass =  ProjectStatus.class, nullable = false)
@@ -28,23 +28,20 @@ public record ProjectRequestDTO(
     @ValueOfEnum(enumClass =  ExperienceLevel.class, nullable = false)
     ExperienceLevel experienceLevel,
 
-    @NotBlank(message = "Deadline is required")
+    @NotBlank(message = "O prazo (deadline) não pode estar vazio")
     String deadlineInDays,
 
-    @NotNull(message = "Visibility status must be specified")
+    @NotNull(message = "A visibilidade (isPublic) é obrigatória")
     Boolean isPublic,
 
-    @NotNull(message = "Category ID is required")
+    @NotNull(message = "O id da categoria é obrigatório")
     Long categoryId,
 
-    @NotNull(message = "Sub-category ID is required")
+    @NotNull(message = "O id da subcategoria é obrigatório")
     Long subcategoryId,
 
-    // Opcional - Pode ser null ou vazio
-    // Para upload de arquivos com multipart/form-data
     List<MultipartFile> files,
 
-    // Pelo menos uma skill é necessária
-    @NotEmpty(message = "At least one skill is required")
+    @NotEmpty(message = "Ao menos uma skill é obrigatória")
     List<@NotNull Long> skillsIds
 ) {}

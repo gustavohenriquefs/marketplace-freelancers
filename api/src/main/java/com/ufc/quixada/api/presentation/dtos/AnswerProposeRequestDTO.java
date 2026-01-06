@@ -6,6 +6,6 @@ import jakarta.validation.constraints.NotNull;
 
 public record AnswerProposeRequestDTO(
         @ValueOfEnum(enumClass = ProposeStatus.class, message = "Status inválido. Use: ACCEPTED, REJECTED, WAITING_ANALYSIS, CANCELED")
-        @NotNull(message = "Status não pode ser nulo")
+        @NotNull(message = "Status é obrigatório")
         String newStatus
 ) { }

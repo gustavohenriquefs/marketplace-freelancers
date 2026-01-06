@@ -21,11 +21,11 @@ import java.util.List;
                 ProposeMapper.class,
                 SkillMapper.class,
                 FileMapper.class,
+                FreelancerMapper.class,
+                UserMapper.class
         }
 )
 public interface ProjectMapper {
-
-    // ===== Mapeamento de DTO de entrada para Domain =====
     
     @Mapping(target = "files", source = "files", qualifiedByName = "mockFilesDTOToDomain")
     @Mapping(target = "category", source = "categoryId", qualifiedByName = "mapCategory")
@@ -36,8 +36,6 @@ public interface ProjectMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     Project toDomain(CreateProjectJsonDTO dto);
-
-    // ===== Mapeamento de Domain para DTO de resposta =====
     
     @Mapping(target = "category", source = "category", qualifiedByName = "categoryToDTO")
     @Mapping(target = "subcategory", source = "subcategory", qualifiedByName = "subcategoryToDTO")
@@ -46,8 +44,6 @@ public interface ProjectMapper {
     @Mapping(target = "skills", source = "skills", qualifiedByName = "skillsToDTO")
     @Mapping(target = "proposes", source = "proposes", qualifiedByName = "proposesToDTO")
     ProjectResponseDTO toDto(Project project);
-
-    // ===== Mapeamento entre Domain e JPA =====
     
     ProjectJpaModel toJpaEntity(Project project);
 
@@ -82,8 +78,6 @@ public interface ProjectMapper {
     @Mapping(target = "contractor.projects", ignore = true)
     Project toDomain(ProjectJpaModel jpaEntity);
 
-    // ===== Métodos auxiliares para criação (ID → Domain Entity) =====
-    
     @Named("mapCategory")
     default Category mapCategory(Long categoryId) {
         if (categoryId == null) {
@@ -109,8 +103,6 @@ public interface ProjectMapper {
                 .map(id -> new Skill(id, null))
                 .toList();
     }
-
-    // ===== Métodos auxiliares para resposta (Domain Entity → DTO) =====
 
     @Named("categoryToDTO")
     default CategoryDTO categoryToDTO(Category category) {
@@ -175,16 +167,19 @@ public interface ProjectMapper {
             return Collections.emptyList();
         }
         return proposes.stream()
-                .map(propose -> new ProposeDTO(
-                        propose.getId(),
-                        propose.getStatus(),
-                        propose.getPrice(),
-                        propose.getDuration(),
-                        propose.getDescription(),
-                        propose.getCreatedAt(),
-                        propose.getUpdatedAt(),
-                        propose.getFreelancer().getId()
-                ))
+                .map(propose -> {
+                    Long freelancerId = propose.getFreelancer() != null ? propose.getFreelancer().getId() : null;
+                    return new ProposeDTO(
+                            propose.getId(),
+                            propose.getStatus(),
+                            propose.getPrice(),
+                            propose.getDuration(),
+                            propose.getDescription(),
+                            propose.getCreatedAt(),
+                            propose.getUpdatedAt(),
+                            freelancerId
+                    );
+                })
                 .toList();
     }
 

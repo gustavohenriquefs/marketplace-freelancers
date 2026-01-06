@@ -41,6 +41,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class DomainConfig {
 
+    @SuppressWarnings("unused")
     private SecurityScheme createAPIKeyScheme() {
         return new SecurityScheme().type(SecurityScheme.Type.HTTP).bearerFormat("JWT").scheme("bearer");
     }
@@ -52,10 +53,11 @@ public class DomainConfig {
     }
 
     @Bean
-    public CreatePropose createPropose(
-            ProposeRepository proposeRepository
+    public IssuePropose issuePropose(
+            ProposeRepository proposeRepository,
+            ProjectRepository projectRepository
     ) {
-        return new CreatePropose(proposeRepository);
+        return new IssuePropose(proposeRepository, projectRepository);
     }
 
     @Bean
@@ -79,13 +81,18 @@ public class DomainConfig {
     }
 
     @Bean
-    public IssuePropose issuePropose(ProposeRepository proposeRepository) {
-        return new IssuePropose(proposeRepository);
+    public GetAllProjects getAllProjects(ProjectRepository projectRepository) {
+        return new GetAllProjects(projectRepository);
     }
 
     @Bean
-    public GetAllProjects getAllProjects(ProjectRepository projectRepository) {
-        return new GetAllProjects(projectRepository);
+    public GetAllFreelancerProjects getAllFreelancerProjects(ProjectRepository projectRepository) {
+        return new GetAllFreelancerProjects(projectRepository);
+    }
+
+    @Bean
+    public GetAllContractorProjects getAllContractorProjects(ProjectRepository projectRepository) {
+        return new GetAllContractorProjects(projectRepository);
     }
 
     @Bean
@@ -94,17 +101,15 @@ public class DomainConfig {
     }
 
     @Bean
-    public AnswerPropose answerPropose(ProposeRepository proposeRepository) {
-        return new AnswerPropose(proposeRepository);
+    public AnswerPropose answerPropose(ProposeRepository proposeRepository, ProjectRepository projectRepository) {
+        return new AnswerPropose(proposeRepository, projectRepository);
     }
 
     @Bean
-    public CreateUserUseCase createUserUseCase(
+    public CreateUser createUserUseCase(
             UserRepository userRepository,
-            FreelancerRepository freelancerRepository,
-            ContractorRepository contractorRepository,
             PasswordEncoder passwordEncoder) {
-        return new CreateUserUseCase(userRepository, freelancerRepository, contractorRepository, passwordEncoder);
+        return new CreateUser(userRepository, passwordEncoder);
     }
 
     @Bean
@@ -156,7 +161,6 @@ public class DomainConfig {
         );
     }
 
-    // ===== Category Repository =====
     @Bean
     public CategoryRepository categoryRepository(
             JpaCategoryRepository jpaRepo,
@@ -164,7 +168,6 @@ public class DomainConfig {
         return new CategoryRepositoryImpl(jpaRepo, mapper);
     }
 
-    // ===== Skill Repository =====
     @Bean
     public SkillRepository skillRepository(
             JpaSkillRepository jpaRepo,
@@ -172,7 +175,6 @@ public class DomainConfig {
         return new SkillRepositoryImpl(jpaRepo, mapper);
     }
 
-    // ===== Subcategory Repository =====
     @Bean
     public SubcategoryRepository subcategoryRepository(
             JpaSubcategoryRepository jpaRepo,
@@ -180,7 +182,6 @@ public class DomainConfig {
         return new SubcategoryRepositoryImpl(jpaRepo, mapper);
     }
 
-    // ===== File Repository =====
     @Bean
     public FileRepository fileRepository(
             JpaFileRepository jpaRepo,
