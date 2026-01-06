@@ -9,8 +9,6 @@ import com.ufc.quixada.api.infrastructure.models.ProjectJpaModel;
 import com.ufc.quixada.api.infrastructure.models.SkillJpaModel;
 import com.ufc.quixada.api.infrastructure.models.SubcategoryJpaModel;
 import jakarta.persistence.EntityManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -18,8 +16,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ProjectRepositoryImpl implements ProjectRepository {
-    private static final Logger log = LoggerFactory.getLogger(ProjectRepositoryImpl.class);
-
     private final JpaProjectRepository jpaRepo;
     private final ProjectMapper projectMapper;
     private final EntityManager entityManager;
@@ -33,14 +29,9 @@ public class ProjectRepositoryImpl implements ProjectRepository {
     @Override
     @Transactional
     public Project createProject(Project project) {
-        log.info("=== Salvando projeto no banco ===");
-        log.info("Projeto recebido: {}", project);
 
         ProjectJpaModel projectJpaModel = projectMapper.toJpaEntity(project);
-        log.info("Projeto convertido para JPA: {}", projectJpaModel);
 
-        // Garante que relações (FK/N:N) apontem para entidades gerenciadas
-        // evitando erros do tipo "detached entity passed to persist".
         if (projectJpaModel.getContractor() != null && projectJpaModel.getContractor().getId() != null) {
             projectJpaModel.setContractor(
                 entityManager.getReference(ContractorJpaModel.class, projectJpaModel.getContractor().getId())
@@ -68,26 +59,78 @@ public class ProjectRepositoryImpl implements ProjectRepository {
         }
 
         ProjectJpaModel result = this.jpaRepo.save(projectJpaModel);
-        log.info("Projeto salvo com ID: {}", result != null ? result.getId() : "null");
-
         Project domainResult = projectMapper.toDomain(result);
-        log.info("Projeto convertido de volta para domínio: {}", domainResult);
 
         return domainResult;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Project> findAll() {
-        return jpaRepo.findAll().stream()
+    public List<Project> findAllVisible(Long userId) {
+        return jpaRepo.findAllByUserIdIfCanViewProject(userId).stream()
                 .map(projectMapper::toDomain)
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Project> findById(Long id) {
-        return jpaRepo.findById(id)
+    public List<Project> findAllByFreelancerId(Long freelancerId) {
+        return jpaRepo.findAllByFreelancers_Id(freelancerId).stream()
+                .map(projectMapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Project> findAllByContractorId(Long contractorId) {
+        return jpaRepo.findAllByContractor_Id(contractorId).stream()
+                .map(projectMapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Project> findByIdIfVisible(Long id, Long userId) {
+        return jpaRepo.findByIdIfIsVisible(id, userId)
                 .map(projectMapper::toDomain);
+    }
+
+    @Override
+    public boolean userCanViewProject(Long userId, Long projectId) {
+        return jpaRepo.userCanViewProject(userId, projectId);
+    }
+
+    @Override
+    @Transactional
+    public Project updateProject(Project project) {
+        if (project == null || project.getId() == null) {
+            throw new IllegalArgumentException("O id do projeto deve ser fornecido para atualização");
+        }
+
+        ProjectJpaModel managed = entityManager.find(ProjectJpaModel.class, project.getId());
+        if (managed == null) {
+            throw new com.ufc.quixada.api.application.exceptions.NotFoundException("Projeto não encontrado");
+        }
+
+        // Update status only to avoid unintentionally replacing collections (which may trigger orphanRemoval)
+        if (project.getStatus() != null) {
+            managed.setStatus(project.getStatus());
+        }
+
+        // Add freelancers without touching other collections
+        if (project.getFreelancers() != null && !project.getFreelancers().isEmpty()) {
+            if (managed.getFreelancers() == null) {
+                managed.setFreelancers(new java.util.HashSet<>());
+            }
+            for (var freelancer : project.getFreelancers()) {
+                if (freelancer != null && freelancer.getId() != null) {
+                    var freelancerRef = entityManager.getReference(com.ufc.quixada.api.infrastructure.models.FreelancerJpaModel.class, freelancer.getId());
+                    managed.getFreelancers().add(freelancerRef);
+                }
+            }
+        }
+
+        ProjectJpaModel updated = jpaRepo.save(managed);
+        return projectMapper.toDomain(updated);
     }
 }

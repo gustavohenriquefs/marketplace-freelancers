@@ -17,18 +17,11 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Handler global de exceções da aplicação.
- * Captura e transforma exceções em respostas HTTP apropriadas.
- */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    /**
-     * Trata exceções de recurso não encontrado (404).
-     */
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ProblemDetail handleNotFoundException(NotFoundException ex) {
@@ -44,9 +37,6 @@ public class GlobalExceptionHandler {
         return problemDetail;
     }
 
-    /**
-     * Trata exceções de regra de negócio (400).
-     */
     @ExceptionHandler(BusinessException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProblemDetail handleBusinessException(BusinessException ex) {
@@ -62,9 +52,6 @@ public class GlobalExceptionHandler {
         return problemDetail;
     }
 
-    /**
-     * Trata erros de validação de campos (400).
-     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProblemDetail handleValidationException(MethodArgumentNotValidException ex) {
@@ -75,7 +62,6 @@ public class GlobalExceptionHandler {
             String fieldName = error.getField();
             String errorMessage = error.getDefaultMessage();
 
-            // Se for erro de conversão de tipo, simplifica a mensagem
             if (errorMessage != null && errorMessage.contains("Failed to convert")) {
                 if (fieldName.equals("skillsIds")) {
                     errorMessage = "Formato inválido. Envie uma lista de IDs numéricos, ex: [1, 2, 3]";
@@ -100,9 +86,6 @@ public class GlobalExceptionHandler {
         return problemDetail;
     }
 
-    /**
-     * Trata erros de conversão de tipo (400).
-     */
     @ExceptionHandler(TypeMismatchException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProblemDetail handleTypeMismatchException(TypeMismatchException ex) {
@@ -124,9 +107,6 @@ public class GlobalExceptionHandler {
         return problemDetail;
     }
 
-    /**
-     * Trata erros de leitura de JSON malformado (400).
-     */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ProblemDetail handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
@@ -134,7 +114,6 @@ public class GlobalExceptionHandler {
 
         String message = "Não foi possível ler o corpo da requisição. Verifique se o JSON está bem formatado.";
 
-        // Tenta extrair uma mensagem mais específica
         if (ex.getMessage() != null) {
             if (ex.getMessage().contains("multipart/form-data")) {
                 message = "Este endpoint espera multipart/form-data para upload de arquivos. " +
@@ -154,9 +133,6 @@ public class GlobalExceptionHandler {
         return problemDetail;
     }
 
-    /**
-     * Trata exceções não previstas (500).
-     */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ProblemDetail handleGenericException(Exception ex) {
@@ -169,8 +145,6 @@ public class GlobalExceptionHandler {
         problemDetail.setTitle("Erro interno");
         problemDetail.setProperty("timestamp", Instant.now());
 
-        // Em desenvolvimento, pode adicionar o stack trace
-        // problemDetail.setProperty("trace", ex.getMessage());
 
         return problemDetail;
     }

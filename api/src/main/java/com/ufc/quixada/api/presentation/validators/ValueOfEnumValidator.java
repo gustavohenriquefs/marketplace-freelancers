@@ -21,30 +21,23 @@ public class ValueOfEnumValidator implements ConstraintValidator<ValueOfEnum, Ob
     public boolean isValid(Object value, ConstraintValidatorContext context) {
         String allowedValuesString = String.join(", ", acceptedValues);
 
-        // Se o valor é null
         if (value == null) {
             return validCheck(nullable, context, allowedValuesString);
         }
 
-        // Converte o valor para String
         String stringValue;
         if (value instanceof Enum<?>) {
-            // Se é um Enum, pega o name()
             stringValue = ((Enum<?>) value).name();
         } else if (value instanceof CharSequence) {
-            // Se é String ou CharSequence
             stringValue = value.toString();
 
-            // Verifica se está vazio
             if (stringValue.isEmpty()) {
                 return validCheck(empty, context, allowedValuesString);
             }
         } else {
-            // Qualquer outro tipo, tenta converter para String
             stringValue = value.toString();
         }
 
-        // Valida se o valor está na lista de valores aceitos
         boolean isValid = acceptedValues.contains(stringValue);
 
         if (!isValid) {

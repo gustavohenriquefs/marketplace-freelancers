@@ -1,6 +1,6 @@
 package com.ufc.quixada.api.presentation.controllers;
 
-import com.ufc.quixada.api.application.usecases.CreateUserUseCase;
+import com.ufc.quixada.api.application.usecases.CreateUser;
 import com.ufc.quixada.api.domain.entities.User;
 import com.ufc.quixada.api.infrastructure.models.UserJpaModel;
 import com.ufc.quixada.api.infrastructure.services.TokenService;
@@ -20,12 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final CreateUserUseCase createUserUseCase;
+    private final CreateUser createUserUseCase;
     private final AuthenticationManager authenticationManager;
-    private final TokenService tokenService; // Da Infra
+    private final TokenService tokenService;
 
     public AuthController(
-            CreateUserUseCase createUserUseCase, AuthenticationManager authenticationManager,
+            CreateUser createUserUseCase, AuthenticationManager authenticationManager,
             TokenService tokenService){
         this.createUserUseCase = createUserUseCase;
         this.authenticationManager = authenticationManager;
@@ -34,30 +34,24 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(@RequestBody @Valid RegisterUserDTO dto) {
-        // 1. Converter DTO -> Domain Entity
         User domainUser = new User();
         domainUser.setName(dto.name());
         domainUser.setEmail(dto.email());
         domainUser.setPassword(dto.password());
 
-        // 2. Chamar UseCase
         createUserUseCase.execute(domainUser);
 
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDTO> login(@RequestBody LoginDTO dto) {
-        // O Login é um caso especial onde frequentemente usamos o AuthManager do Spring direto
-        // pois ele já bate no banco e valida hash.
+    public ResponseEntity<TokenDTO> login(@RequestBody @Valid LoginDTO dto) {
 
         var usernamePassword = new UsernamePasswordAuthenticationToken(dto.email(), dto.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
 
-        // O Principal retornado é o UserModel da Infra (que é UserDetails)
         var userModel = (UserJpaModel) auth.getPrincipal();
 
-        // Gera token usando a entidade da infra (necessário para pegar roles)
         String token = tokenService.generateToken(userModel);
 
         return ResponseEntity.ok(new TokenDTO(token));
