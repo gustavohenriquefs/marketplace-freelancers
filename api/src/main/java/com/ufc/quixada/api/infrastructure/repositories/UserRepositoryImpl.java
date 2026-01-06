@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public class UserRepositoryImpl implements UserRepository {
     private final UserJpaRepository springRepo;
-    private final UserMapper mapper; // MapStruct ou manual
+    private final UserMapper mapper;
 
     public UserRepositoryImpl(UserJpaRepository springRepo, UserMapper mapper) {
         this.springRepo = springRepo;

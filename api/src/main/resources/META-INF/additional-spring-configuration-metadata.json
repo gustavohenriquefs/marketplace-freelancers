@@ -1,0 +1,7 @@
+{"properties": [
+  {
+    "name": "api.security.token.secret",
+    "type": "java.lang.String",
+    "description": "Esta propriedade serve para definir para o Token Service o secret que vai ser usado para criptografar as senhas dos usuários a serem criados no sistema."
+  }
+]}

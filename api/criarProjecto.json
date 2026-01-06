@@ -9,7 +9,6 @@
   "deadlineEmDias":"30",
   "publico":false,
   "valorMinimoCents":null,
-  //Sem necessidade isso aqui embbaixo
   "processing":false,
   "postagem":true,
   "lax":false,

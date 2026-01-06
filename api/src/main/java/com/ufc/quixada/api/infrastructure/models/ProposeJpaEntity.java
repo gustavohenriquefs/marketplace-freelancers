@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "propose")
+@Table(name = "proposes")
 @Getter
 @Setter
 public class ProposeJpaEntity {
@@ -25,7 +25,8 @@ public class ProposeJpaEntity {
     @Column()
     private int duration;
 
-    @Column()
+    @Enumerated(jakarta.persistence.EnumType.STRING)
+    @Column(nullable = false, length = 32)
     private ProposeStatus status;
 
     @Column()

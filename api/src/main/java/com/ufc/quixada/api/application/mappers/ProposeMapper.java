@@ -12,6 +12,8 @@ import com.ufc.quixada.api.presentation.dtos.ProposeResponseDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
+import org.mapstruct.AfterMapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface ProposeMapper {
@@ -41,16 +43,41 @@ public interface ProposeMapper {
         return ref;
     }
 
-    @Mapping(target = "freelancer.user.freelancerProfile", ignore = true)
-    @Mapping(target = "freelancer.user.contractorProfile", ignore = true)
-    @Mapping(target = "freelancer.projects", ignore = true)
-    @Mapping(target = "freelancer.proposes", ignore = true)
-    @Mapping(target = "project.proposes", ignore = true)
-    @Mapping(target = "project.files", ignore = true)
-    @Mapping(target = "project.contractor.user.freelancerProfile", ignore = true)
-    @Mapping(target = "project.contractor.user.contractorProfile", ignore = true)
-    @Mapping(target = "project.contractor.projects", ignore = true)
+    @Mapping(target = "freelancer", ignore = true)
+    @Mapping(target = "project", ignore = true)
     Propose toDomain(ProposeJpaEntity proposeJpaEntity);
+
+    @AfterMapping
+    default void setShallowRefs(ProposeJpaEntity source, @MappingTarget Propose target) {
+        if (source == null || target == null) return;
+        if (source.getFreelancer() != null) {
+            target.setFreelancer(freelancerShallow(source.getFreelancer()));
+        }
+        if (source.getProject() != null) {
+            target.setProject(projectShallow(source.getProject()));
+        }
+    }
+
+    @Named("freelancerShallow")
+    default Freelancer freelancerShallow(FreelancerJpaModel jpa) {
+        if (jpa == null) return null;
+        Freelancer f = new Freelancer();
+        f.setId(jpa.getId());
+        return f;
+    }
+
+    @Named("projectShallow")
+    default Project projectShallow(ProjectJpaModel jpa) {
+        if (jpa == null) return null;
+        Project p = new Project();
+        p.setId(jpa.getId());
+        if (jpa.getContractor() != null) {
+            com.ufc.quixada.api.domain.entities.Contractor c = new com.ufc.quixada.api.domain.entities.Contractor();
+            c.setId(jpa.getContractor().getId());
+            p.setContractor(c);
+        }
+        return p;
+    }
 
     Propose toDomain(CreateProposeRequestDTO proposeResponseDTO);
     Propose toDomain(AnswerProposeRequestDTO answererProposeRequestDTO);
