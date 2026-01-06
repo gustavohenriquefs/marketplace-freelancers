@@ -99,12 +99,12 @@ public class DomainConfig {
     }
 
     @Bean
-    public CreateUserUseCase createUserUseCase(
+    public CreateUser createUserUseCase(
             UserRepository userRepository,
             FreelancerRepository freelancerRepository,
             ContractorRepository contractorRepository,
             PasswordEncoder passwordEncoder) {
-        return new CreateUserUseCase(userRepository, freelancerRepository, contractorRepository, passwordEncoder);
+        return new CreateUser(userRepository, freelancerRepository, contractorRepository, passwordEncoder);
     }
 
     @Bean

@@ -35,7 +35,7 @@ public interface ProjectMapper {
     @Mapping(target = "proposes", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    Project toDomain(CreateProjectJsonDTO dto);
+    Project toDomain(CreateProjectRequestDTO dto);
 
     // ===== Mapeamento de Domain para DTO de resposta =====
     
@@ -113,19 +113,19 @@ public interface ProjectMapper {
     // ===== Métodos auxiliares para resposta (Domain Entity → DTO) =====
 
     @Named("categoryToDTO")
-    default CategoryDTO categoryToDTO(Category category) {
+    default CategoryResponseDTO categoryToDTO(Category category) {
         if (category == null) {
             return null;
         }
-        return new CategoryDTO(category.getId(), category.getName());
+        return new CategoryResponseDTO(category.getId(), category.getName());
     }
 
     @Named("subcategoryToDTO")
-    default SubcategoryDTO subcategoryToDTO(Subcategory subcategory) {
+    default SubcategoryResponseDTO subcategoryToDTO(Subcategory subcategory) {
         if (subcategory == null) {
             return null;
         }
-        return new SubcategoryDTO(
+        return new SubcategoryResponseDTO(
                 subcategory.getId(),
                 subcategory.getName(),
                 subcategory.getCategory() != null ? subcategory.getCategory().getId() : null
@@ -133,11 +133,11 @@ public interface ProjectMapper {
     }
 
     @Named("contractorToDTO")
-    default ContractorDTO contractorToDTO(Contractor contractor) {
+    default ContractorResponseDTO contractorToDTO(Contractor contractor) {
         if (contractor == null || contractor.getUser() == null) {
             return null;
         }
-        return new ContractorDTO(
+        return new ContractorResponseDTO(
                 contractor.getId(),
                 contractor.getUser().getName(),
                 contractor.getUser().getEmail()
@@ -145,12 +145,12 @@ public interface ProjectMapper {
     }
 
     @Named("filesToDTO")
-    default List<FileDTO> filesToDTO(List<File> files) {
+    default List<FileResponseDTO> filesToDTO(List<File> files) {
         if (files == null || files.isEmpty()) {
             return Collections.emptyList();
         }
         return files.stream()
-                .map(file -> new FileDTO(
+                .map(file -> new FileResponseDTO(
                         file.getId(),
                         file.getFileName(),
                         file.getFileType(),
@@ -160,24 +160,24 @@ public interface ProjectMapper {
     }
 
     @Named("skillsToDTO")
-    default List<SkillDTO> skillsToDTO(List<Skill> skills) {
+    default List<SkillResponseDTO> skillsToDTO(List<Skill> skills) {
         if (skills == null || skills.isEmpty()) {
             return Collections.emptyList();
         }
         return skills.stream()
-                .map(skill -> new SkillDTO(skill.getId(), skill.getName()))
+                .map(skill -> new SkillResponseDTO(skill.getId(), skill.getName()))
                 .toList();
     }
 
     @Named("proposesToDTO")
-    default List<ProposeDTO> proposesToDTO(List<Propose> proposes) {
+    default List<ProposeResponseDTO> proposesToDTO(List<Propose> proposes) {
         if (proposes == null || proposes.isEmpty()) {
             return Collections.emptyList();
         }
         return proposes.stream()
                 .map(propose -> {
                     Long freelancerId = propose.getFreelancer() != null ? propose.getFreelancer().getId() : null;
-                    return new ProposeDTO(
+                    return new ProposeResponseDTO(
                             propose.getId(),
                             propose.getStatus(),
                             propose.getPrice(),

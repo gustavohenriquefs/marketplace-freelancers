@@ -1,12 +1,12 @@
 package com.ufc.quixada.api.presentation.controllers;
 
-import com.ufc.quixada.api.application.usecases.CreateUserUseCase;
+import com.ufc.quixada.api.application.usecases.CreateUser;
 import com.ufc.quixada.api.domain.entities.User;
 import com.ufc.quixada.api.infrastructure.models.UserJpaModel;
 import com.ufc.quixada.api.infrastructure.services.TokenService;
-import com.ufc.quixada.api.presentation.dtos.LoginDTO;
-import com.ufc.quixada.api.presentation.dtos.RegisterUserDTO;
-import com.ufc.quixada.api.presentation.dtos.TokenDTO;
+import com.ufc.quixada.api.presentation.dtos.LoginRequestDTO;
+import com.ufc.quixada.api.presentation.dtos.RegisterUserRequestDTO;
+import com.ufc.quixada.api.presentation.dtos.TokenResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,20 +20,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final CreateUserUseCase createUserUseCase;
+    private final CreateUser createUser;
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService; // Da Infra
 
     public AuthController(
-            CreateUserUseCase createUserUseCase, AuthenticationManager authenticationManager,
+            CreateUser createUser, AuthenticationManager authenticationManager,
             TokenService tokenService){
-        this.createUserUseCase = createUserUseCase;
+        this.createUser = createUser;
         this.authenticationManager = authenticationManager;
         this.tokenService = tokenService;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody @Valid RegisterUserDTO dto) {
+    public ResponseEntity<Void> register(@RequestBody @Valid RegisterUserRequestDTO dto) {
         // 1. Converter DTO -> Domain Entity
         User domainUser = new User();
         domainUser.setName(dto.name());
@@ -41,13 +41,13 @@ public class AuthController {
         domainUser.setPassword(dto.password());
 
         // 2. Chamar UseCase
-        createUserUseCase.execute(domainUser);
+        createUser.execute(domainUser);
 
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDTO> login(@RequestBody LoginDTO dto) {
+    public ResponseEntity<TokenResponseDTO> login(@RequestBody LoginRequestDTO dto) {
         // O Login é um caso especial onde frequentemente usamos o AuthManager do Spring direto
         // pois ele já bate no banco e valida hash.
 
@@ -60,6 +60,6 @@ public class AuthController {
         // Gera token usando a entidade da infra (necessário para pegar roles)
         String token = tokenService.generateToken(userModel);
 
-        return ResponseEntity.ok(new TokenDTO(token));
+        return ResponseEntity.ok(new TokenResponseDTO(token));
     }
 }

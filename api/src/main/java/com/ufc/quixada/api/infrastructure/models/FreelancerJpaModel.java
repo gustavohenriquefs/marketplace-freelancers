@@ -25,7 +25,7 @@ public class FreelancerJpaModel {
 
     @JsonIgnore
     @OneToMany(mappedBy = "freelancer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private Set<ProposeJpaEntity> proposes;
+    private Set<ProposeJpaModel> proposes;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)

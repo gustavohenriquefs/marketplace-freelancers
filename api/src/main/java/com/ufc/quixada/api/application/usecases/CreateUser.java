@@ -1,5 +1,6 @@
 package com.ufc.quixada.api.application.usecases;
 
+import com.ufc.quixada.api.application.exceptions.UserAlreadyExistsException;
 import com.ufc.quixada.api.domain.entities.Contractor;
 import com.ufc.quixada.api.domain.entities.Freelancer;
 import com.ufc.quixada.api.domain.entities.User;
@@ -8,13 +9,13 @@ import com.ufc.quixada.api.domain.repositories.FreelancerRepository;
 import com.ufc.quixada.api.domain.repositories.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-public class CreateUserUseCase {
+public class CreateUser {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder; // O Spring injeta a implementação da Infra
     private final FreelancerRepository freelancerRepository;
     private final ContractorRepository contractorRepository;
 
-    public CreateUserUseCase(
+    public CreateUser(
             UserRepository userRepository,
             FreelancerRepository freelancerRepository,
             ContractorRepository contractorRepository,
@@ -28,7 +29,7 @@ public class CreateUserUseCase {
     public void execute(User userDomain) {
         // Regras de negócio (ex: validar email)
         if(userRepository.findByEmail(userDomain.getEmail()).isPresent()){
-            throw new RuntimeException("Email já existe");
+            throw new UserAlreadyExistsException(userDomain.getEmail());
         }
 
         // Criptografia (Regra de segurança aplicada antes de salvar)

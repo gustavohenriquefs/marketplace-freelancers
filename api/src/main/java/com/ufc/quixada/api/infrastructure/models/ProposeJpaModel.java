@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Table(name = "propose")
 @Getter
 @Setter
-public class ProposeJpaEntity {
+public class ProposeJpaModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
