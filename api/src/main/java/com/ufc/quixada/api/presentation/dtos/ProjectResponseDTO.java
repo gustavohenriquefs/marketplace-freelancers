@@ -25,6 +25,7 @@ public record ProjectResponseDTO(
         CategoryResponseDTO category,
         SubcategoryResponseDTO subcategory,
         ContractorResponseDTO contractor,
+        List<FreelancerResponseDTO> freelancers,
         List<ProposeResponseDTO> proposes,
         List<FileResponseDTO> files,
         List<SkillResponseDTO> skills

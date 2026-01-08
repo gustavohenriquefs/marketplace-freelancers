@@ -39,22 +39,23 @@ SELECT * FROM skills ORDER BY id;
 # Mocks e Exemplos de Uso da API
 ````json
 // Freelancers
-{
+[{
   "name": "Gustavo Mock",
   "email": "freelancer@email.com",
-  "password": "123"
-}
+  "password": "12345678"
+},
 {
   "name": "Gustavo Mock 2",
   "email": "freelancer2@email.com",
-  "password": "123"
-}
+  "password": "12345678"
+},
 // Contratante
 {
   "name": "Juan Mock",
   "email": "contractor@email.com",
-  "password": "123"
+  "password": "12345678"
 }
+]
 ````
 
 ## 1) Autenticação (Register e Login)
@@ -70,32 +71,47 @@ Mock JSON:
 
 Mock JSON (troque IDs pelos do seu banco via SELECT):
 ````json
-{
-  "name": "API de Marketplace",
-  "description": "Criar endpoints para marketplace de freelancers.",
-  "budget": 1500.00,
-  "status": "OPEN",
-  "experienceLevel": "INTERMEDIATE",
-  "deadlineInDays": 15,
-  "files": [],
-  "isPublic": true,
-  "categoryId": 1,
-  "subcategoryId": 1,
-  "skillsIds": [1, 2, 3]
-}
-,{
-    "name": "Website Institucional",
-    "description": "Desenvolver site institucional responsivo.",
-    "budget": 800.00,
-    "status": "OPEN",
-    "experienceLevel": "BEGINNER",
-    "deadlineInDays": 10,
-    "files": [],
-    "isPublic": true,
-    "categoryId": 1,
-    "subcategoryId": 2,
-    "skillsIds": [5, 6]
-}
+[
+  {
+      "name": "API de Marketplace",
+      "description": "Criar endpoints para marketplace de freelancers.",
+      "budget": 1500.00,
+      "status": "OPEN",
+      "experienceLevel": "INTERMEDIATE",
+      "deadlineInDays": 15,
+      "files": [],
+      "isPublic": true,
+      "categoryId": 1,
+      "subcategoryId": 1,
+      "skillsIds": [1, 2, 3]
+  }
+    ,{
+        "name": "Website Institucional",
+        "description": "Desenvolver site institucional responsivo.",
+        "budget": 800.00,
+        "status": "OPEN",
+        "experienceLevel": "BEGINNER",
+        "deadlineInDays": 10,
+        "files": [],
+        "isPublic": true,
+        "categoryId": 1,
+        "subcategoryId": 2,
+        "skillsIds": [5, 6]
+    },
+    {
+        "name": "Website Institucional PRIVADO",
+        "description": "Desenvolver site institucional responsivo.",
+        "budget": 1800.00,
+        "status": "OPEN",
+        "experienceLevel": "BEGINNER",
+        "deadlineInDays": 10,
+        "files": [],
+        "isPublic": false,
+        "categoryId": 1,
+        "subcategoryId": 2,
+        "skillsIds": [5, 6]
+    }
+]
 ````
 
 ### 2.1) Projects Controller
@@ -130,38 +146,38 @@ SELECT * FROM skills ORDER BY id;
 
 ## 4) SELECTs para verificar dados inseridos
 
-````sql
--- Users
-SELECT id, name, email, password, freelancer_profile_id, contractor_profile_id
-FROM users
-ORDER BY id;
+### SELECTs úteis para depuração dos fluxos
 
--- Freelancers
-SELECT * FROM freelancers ORDER BY id;
-
--- Contractors
-SELECT * FROM contractors ORDER BY id;
+```sql
+-- Users/Freelancers/Contractors
+SELECT u.id as user_id, u.email, u.name,u.password, f.id as freelancer_profile_id, c.id as contractor_profile_id  
+FROM users u join freelancers f on u.id = f.user_id 
+			 join contractors c on u.id = c.user_id
+ORDER BY u.id;
 
 -- Categories / Subcategories / Skills
 SELECT * FROM categories ORDER BY id;
 SELECT * FROM subcategories ORDER BY id;
 SELECT * FROM skills ORDER BY id;
 
+SELECT c.id as category_id, c.name as category_name, s.id as subcategory_id, s.name as subcategory_name
+	from public.categories c 
+	join public.subcategories s on s.category_id = c.id
+
 -- Projects
 SELECT * FROM projects ORDER BY id;
 
 -- Proposes
-SELECT * FROM propose ORDER BY id;
+SELECT * FROM proposes ORDER BY id;
 
 -- Files
 SELECT * FROM files ORDER BY id;
 
 -- Joins
 SELECT * FROM project_skills ORDER BY project_id, skill_id;
-SELECT * FROM freelancer_projects ORDER BY freelancer_id, project_id;
-````
-
-### SELECTs úteis para depuração dos fluxos
+SELECT * FROM project_freelancers ORDER BY freelancer_id, project_id;
+SELECT * from projects ORDER BY contractor_id
+```
 
 ````sql
 -- Ver projetos com categoria/subcategoria (join simples)
